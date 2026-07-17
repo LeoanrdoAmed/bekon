@@ -4363,3 +4363,345 @@ body[data-page="dashboard"] .tx-table td small {
     height: min(640px, calc(100vh - 220px));
   }
 }
+
+/* ERP navigation layout */
+:root {
+  --erp-bg: #071322;
+  --erp-bg-deep: #030913;
+  --erp-sidebar: #0a1728;
+  --erp-sidebar-2: #10233a;
+  --erp-card: rgba(14, 31, 52, 0.94);
+  --erp-card-2: rgba(18, 39, 66, 0.96);
+  --erp-line: rgba(221, 180, 74, 0.15);
+  --erp-line-strong: rgba(221, 180, 74, 0.28);
+  --erp-gold: #d7ae17;
+  --erp-gold-2: #f0c94f;
+}
+
+html,
+body {
+  background:
+    linear-gradient(180deg, rgba(27, 51, 88, 0.92), rgba(7, 19, 34, 0.98) 44%, var(--erp-bg-deep) 100%);
+}
+
+body::before {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+  background-size: 34px 34px;
+}
+
+.page-shell {
+  width: min(1500px, calc(100vw - 28px));
+  min-height: calc(100vh - 28px);
+  display: grid;
+  grid-template-columns: 286px minmax(0, 1fr);
+  gap: 18px;
+  margin: 14px auto;
+}
+
+.erp-sidebar {
+  position: sticky;
+  top: 14px;
+  z-index: 10;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 18px;
+  height: calc(100vh - 28px);
+  min-height: 620px;
+  padding: 18px;
+  border: 1px solid var(--erp-line);
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, rgba(31, 62, 100, 0.68), rgba(7, 19, 34, 0.96)),
+    var(--erp-sidebar);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
+  overflow: hidden;
+}
+
+.erp-sidebar-brand {
+  display: grid;
+  gap: 10px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(221, 180, 74, 0.14);
+}
+
+.erp-sidebar-brand .brand-logo {
+  width: 210px;
+}
+
+.erp-sidebar-brand .brand-meta small:last-child {
+  color: rgba(245, 247, 251, 0.72);
+}
+
+.erp-nav {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.erp-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 46px;
+  padding: 0 13px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  color: rgba(245, 247, 251, 0.78);
+  font-size: 0.94rem;
+  font-weight: 700;
+  transition: 160ms ease;
+}
+
+.erp-nav-item svg {
+  width: 21px;
+  height: 21px;
+  fill: currentColor;
+  flex: 0 0 auto;
+}
+
+.erp-nav-item:hover,
+.erp-nav-item.is-active {
+  border-color: var(--erp-line-strong);
+  background:
+    linear-gradient(135deg, rgba(240, 201, 79, 0.18), rgba(215, 174, 23, 0.06));
+  color: var(--erp-gold-2);
+}
+
+.erp-sidebar-account {
+  display: grid;
+  gap: 10px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(221, 180, 74, 0.14);
+}
+
+.erp-sidebar-account .topbar-tenant {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.erp-sidebar-account .topbar-auth-user {
+  color: rgba(245, 247, 251, 0.72);
+}
+
+.erp-sidebar-account .button {
+  width: 100%;
+}
+
+.erp-workspace {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+}
+
+.erp-topbar {
+  position: sticky;
+  top: 14px;
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 74px;
+  padding: 14px 18px;
+  border: 1px solid var(--erp-line);
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(29, 56, 91, 0.9), rgba(8, 23, 39, 0.9)),
+    rgba(8, 21, 36, 0.94);
+  box-shadow: 0 18px 52px rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(14px);
+}
+
+.erp-topbar-kicker {
+  display: block;
+  color: var(--erp-gold-2);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.erp-topbar h1 {
+  margin: 3px 0 0;
+  font-size: 1.32rem;
+  line-height: 1.15;
+}
+
+.main-content {
+  margin-top: 18px;
+}
+
+.flash-stack {
+  margin-top: 14px;
+}
+
+.panel,
+.stat-card,
+.glass-card,
+.rail-card,
+.static-card,
+.connect-account-card,
+.profile-item,
+.chat-panel,
+.chat-sidebar {
+  border-color: rgba(221, 180, 74, 0.13);
+  background:
+    linear-gradient(155deg, rgba(31, 62, 100, 0.62), rgba(7, 19, 34, 0.92)),
+    var(--erp-card);
+}
+
+.stat-card,
+.panel,
+.rail-card,
+.static-card {
+  box-shadow: 0 18px 54px rgba(0, 0, 0, 0.25);
+}
+
+.button {
+  border-radius: 12px;
+}
+
+.button-primary {
+  background: linear-gradient(135deg, var(--erp-gold-2), var(--erp-gold));
+  color: #111114;
+}
+
+.button-secondary,
+.button-ghost {
+  background: rgba(25, 49, 80, 0.62);
+  border-color: rgba(221, 180, 74, 0.18);
+}
+
+input,
+select,
+textarea {
+  border-color: rgba(221, 180, 74, 0.14);
+  background: rgba(7, 18, 32, 0.92);
+}
+
+.chat-widget-shell {
+  z-index: 30;
+}
+
+@media (max-width: 1080px) {
+  .page-shell {
+    grid-template-columns: 88px minmax(0, 1fr);
+  }
+
+  .erp-sidebar {
+    padding: 12px;
+  }
+
+  .erp-sidebar-brand {
+    align-items: center;
+    justify-items: center;
+  }
+
+  .erp-sidebar-brand .brand-logo {
+    width: 54px;
+    height: 54px;
+    object-fit: cover;
+    object-position: left center;
+    border-radius: 16px;
+  }
+
+  .erp-sidebar-brand .brand-meta,
+  .erp-nav-item span,
+  .erp-sidebar-account .topbar-tenant,
+  .erp-sidebar-account .topbar-auth-user {
+    display: none;
+  }
+
+  .erp-nav-item {
+    justify-content: center;
+    padding: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  body {
+    padding-bottom: 72px;
+  }
+
+  .page-shell {
+    width: 100%;
+    min-height: 100vh;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin: 0;
+    padding: 10px;
+  }
+
+  .erp-sidebar {
+    position: sticky;
+    top: 0;
+    height: auto;
+    min-height: 0;
+    grid-template-rows: auto auto;
+    gap: 10px;
+    padding: 12px;
+    border-radius: 0 0 22px 22px;
+  }
+
+  .erp-sidebar-brand {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 10px;
+  }
+
+  .erp-sidebar-brand .brand-logo {
+    width: 146px;
+    height: auto;
+    object-fit: contain;
+    border-radius: 0;
+  }
+
+  .erp-sidebar-brand .brand-meta {
+    display: none;
+  }
+
+  .erp-nav {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 0 0 2px;
+  }
+
+  .erp-nav-item {
+    flex: 0 0 auto;
+    width: 48px;
+    height: 44px;
+  }
+
+  .erp-sidebar-account {
+    display: none;
+  }
+
+  .erp-topbar {
+    position: static;
+    min-height: 62px;
+    padding: 12px 14px;
+  }
+
+  .erp-topbar h1 {
+    font-size: 1.08rem;
+  }
+
+  .erp-topbar .button {
+    min-height: 34px;
+    padding-inline: 10px;
+  }
+
+  .main-content {
+    margin-top: 12px;
+  }
+}

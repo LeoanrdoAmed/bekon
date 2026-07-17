@@ -11,41 +11,44 @@
   </head>
   <body data-page="{{ page_key or '' }}">
     <div class="page-shell">
-      <header class="topbar">
-        <details class="brand-menu" data-brand-menu>
-          <summary class="brand brand-summary">
-            <img class="brand-logo" src="{{ url_for('static', filename='logo-fin-na-mao.svg') }}" alt="Fin na Mao">
-            <span class="brand-meta">
-              <small class="brand-overline">by TPRO</small>
-              <small>Open Finance privado + assistente financeiro</small>
-            </span>
-          </summary>
-          <div class="brand-dropdown">
-            <a class="brand-dropdown-item {{ 'is-active' if page_key == 'profile' else '' }}" href="{{ url_for('main.profile_view') }}">
-              <strong>Perfil</strong>
-              <small>Dados do cliente e informacoes do onboarding</small>
+      <aside class="erp-sidebar">
+        <div class="erp-sidebar-brand">
+          <img class="brand-logo" src="{{ url_for('static', filename='logo-fin-na-mao.svg') }}" alt="Fin na Mao">
+          <span class="brand-meta">
+            <small class="brand-overline">Open Finance</small>
+            <small>ERP financeiro privado</small>
+          </span>
+        </div>
+
+        <nav class="erp-nav" aria-label="Navegacao principal">
+          <a class="erp-nav-item {{ 'is-active' if page_key == 'dashboard' else '' }}" href="{{ url_for('main.dashboard') }}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6h-4v6H5a1 1 0 0 1-1-1v-9.5Z"></path></svg>
+            <span>Dashboard</span>
+          </a>
+          <a class="erp-nav-item {{ 'is-active' if page_key == 'setup' else '' }}" href="{{ url_for('main.connections') }}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6.5A2.5 2.5 0 0 1 7.5 4h9A2.5 2.5 0 0 1 19 6.5v11A2.5 2.5 0 0 1 16.5 20h-9A2.5 2.5 0 0 1 5 17.5v-11Zm3 1v3h8v-3H8Zm0 6v1.6h8V13.5H8Z"></path></svg>
+            <span>Conexoes</span>
+          </a>
+          <a class="erp-nav-item {{ 'is-active' if page_key == 'operations' else '' }}" href="{{ url_for('main.operations_view') }}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v3H5V4Zm0 6h14v3H5v-3Zm0 6h14v4H5v-4Z"></path></svg>
+            <span>Operacoes</span>
+          </a>
+          <a class="erp-nav-item {{ 'is-active' if page_key == 'profile' else '' }}" href="{{ url_for('main.profile_view') }}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-8 8a8 8 0 0 1 16 0v1H4v-1Z"></path></svg>
+            <span>Perfil</span>
+          </a>
+          {% if can_manage_users %}
+            <a class="erp-nav-item {{ 'is-active' if page_key == 'register' else '' }}" href="{{ url_for('main.register') }}">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 11a4 4 0 1 0-8 0 4 4 0 0 0 8 0Zm-12 9a8 8 0 0 1 13.3-6h1.2v-3h2v3h3v2h-3v3h-2v-3h-3v-1.1A6 6 0 0 0 5 20H3Z"></path></svg>
+              <span>Usuarios</span>
             </a>
-            <a class="brand-dropdown-item {{ 'is-active' if page_key == 'setup' else '' }}" href="{{ url_for('main.connections') }}">
-              <strong>Configuracao</strong>
-              <small>Contas, cartoes e ajustes operacionais</small>
-            </a>
-            <a class="brand-dropdown-item {{ 'is-active' if page_key == 'operations' else '' }}" href="{{ url_for('main.operations_view') }}">
-              <strong>Operacoes</strong>
-              <small>Fila tecnica, sincronizacoes e diagnosticos</small>
-            </a>
-          </div>
-        </details>
-        <nav class="topnav">
-          <a class="{{ 'is-active' if page_key == 'dashboard' else '' }}" href="{{ url_for('main.dashboard') }}">Dashboard</a>
-          <a class="{{ 'is-active' if page_key == 'operations' else '' }}" href="{{ url_for('main.operations_view') }}">Operacoes</a>
+          {% endif %}
         </nav>
-        <div class="topbar-auth">
+
+        <div class="erp-sidebar-account">
           {% if authenticated_user %}
             {% if current_tenant_name %}
               <span class="topbar-tenant">{{ current_tenant_name }}</span>
-            {% endif %}
-            {% if can_manage_users %}
-              <a class="button button-ghost button-small" href="{{ url_for('main.register') }}">Cadastrar usuario</a>
             {% endif %}
             <span class="topbar-auth-user">{{ authenticated_user }}</span>
             <form method="post" action="{{ url_for('main.logout') }}" class="topbar-auth-form">
@@ -58,21 +61,37 @@
             <span class="topbar-auth-status">Login desativado neste ambiente</span>
           {% endif %}
         </div>
-      </header>
+      </aside>
 
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          <section class="flash-stack">
-            {% for category, message in messages %}
-              <div class="flash flash-{{ category }}">{{ message }}</div>
-            {% endfor %}
-          </section>
-        {% endif %}
-      {% endwith %}
+      <div class="erp-workspace">
+        <header class="erp-topbar">
+          <div>
+            <span class="erp-topbar-kicker">Sistema financeiro</span>
+            <h1>
+              {% if page_key == 'dashboard' %}Dashboard
+              {% elif page_key == 'setup' %}Conexoes
+              {% elif page_key == 'operations' %}Operacoes
+              {% elif page_key == 'profile' %}Perfil
+              {% else %}Painel{% endif %}
+            </h1>
+          </div>
+          <button class="button button-primary button-small" type="button" data-open-chat-widget>Abrir chat</button>
+        </header>
 
-      <main class="main-content">
-        {% block content %}{% endblock %}
-      </main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <section class="flash-stack">
+              {% for category, message in messages %}
+                <div class="flash flash-{{ category }}">{{ message }}</div>
+              {% endfor %}
+            </section>
+          {% endif %}
+        {% endwith %}
+
+        <main class="main-content">
+          {% block content %}{% endblock %}
+        </main>
+      </div>
     </div>
 
     <div class="chat-widget-shell {{ 'is-open' if chat_widget.auto_open else '' }}" id="chat-app" data-session-id="{{ chat_widget.current_session.id }}" data-auto-open="{{ '1' if chat_widget.auto_open else '0' }}">
