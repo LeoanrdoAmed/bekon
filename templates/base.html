@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{% block title %}Fin na Mao{% endblock %}</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.svg') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
+  </head>
+  <body data-page="{{ page_key or '' }}">
+    <div class="page-shell">
+      <header class="topbar">
+        <details class="brand-menu" data-brand-menu>
+          <summary class="brand brand-summary">
+            <img class="brand-logo" src="{{ url_for('static', filename='logo-fin-na-mao.svg') }}" alt="Fin na Mao">
+            <span class="brand-meta">
+              <small class="brand-overline">by TPRO</small>
+              <small>Open Finance privado + assistente financeiro</small>
+            </span>
+          </summary>
+          <div class="brand-dropdown">
+            <a class="brand-dropdown-item {{ 'is-active' if page_key == 'profile' else '' }}" href="{{ url_for('main.profile_view') }}">
+              <strong>Perfil</strong>
+              <small>Dados do cliente e informacoes do onboarding</small>
+            </a>
+            <a class="brand-dropdown-item {{ 'is-active' if page_key == 'setup' else '' }}" href="{{ url_for('main.connections') }}">
+              <strong>Configuracao</strong>
+              <small>Contas, cartoes e ajustes operacionais</small>
+            </a>
+            <a class="brand-dropdown-item {{ 'is-active' if page_key == 'operations' else '' }}" href="{{ url_for('main.operations_view') }}">
+              <strong>Operacoes</strong>
+              <small>Fila tecnica, sincronizacoes e diagnosticos</small>
+            </a>
+          </div>
+        </details>
+        <nav class="topnav">
+          <a class="{{ 'is-active' if page_key == 'dashboard' else '' }}" href="{{ url_for('main.dashboard') }}">Dashboard</a>
+          <a class="{{ 'is-active' if page_key == 'operations' else '' }}" href="{{ url_for('main.operations_view') }}">Operacoes</a>
+        </nav>
+        <div class="topbar-auth">
+          {% if authenticated_user %}
+            {% if current_tenant_name %}
+              <span class="topbar-tenant">{{ current_tenant_name }}</span>
+            {% endif %}
+            {% if can_manage_users %}
+              <a class="button button-ghost button-small" href="{{ url_for('main.register') }}">Cadastrar usuario</a>
+            {% endif %}
+            <span class="topbar-auth-user">{{ authenticated_user }}</span>
+            <form method="post" action="{{ url_for('main.logout') }}" class="topbar-auth-form">
+              {{ csrf_input() }}
+              <button class="button button-ghost button-small" type="submit">Sair</button>
+            </form>
+          {% elif auth_enabled %}
+            <a class="button button-primary button-small" href="{{ url_for('main.login', next=request.full_path.rstrip('?') or request.path) }}">Entrar</a>
+          {% else %}
+            <span class="topbar-auth-status">Login desativado neste ambiente</span>
+          {% endif %}
+        </div>
+      </header>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <section class="flash-stack">
+            {% for category, message in messages %}
+              <div class="flash flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+          </section>
+        {% endif %}
+      {% endwith %}
+
+      <main class="main-content">
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+
+    <div class="chat-widget-shell {{ 'is-open' if chat_widget.auto_open else '' }}" id="chat-app" data-session-id="{{ chat_widget.current_session.id }}" data-auto-open="{{ '1' if chat_widget.auto_open else '0' }}">
+      <button class="chat-widget-launcher" id="chat-widget-toggle" type="button" aria-controls="chat-widget-panel" aria-expanded="{{ 'true' if chat_widget.auto_open else 'false' }}">
+        <span class="chat-widget-launcher-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" role="img" focusable="false">
+            <path d="M5 5h14a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3H11l-4.5 3.5A1 1 0 0 1 5 20.7V18a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3Z"></path>
+          </svg>
+        </span>
+      </button>
+
+      <section class="chat-widget-panel" id="chat-widget-panel">
+        <header class="chat-widget-head">
+          <div>
+            <strong>Fin na Mao</strong>
+            <small>Assistente financeiro conversacional</small>
+          </div>
+          <div class="chat-widget-head-actions">
+            <details class="chat-widget-sessions-menu" data-chat-sessions-menu>
+              <summary class="button button-ghost button-small">Conversas</summary>
+              <div class="chat-widget-sessions-dropdown">
+                <div class="chat-session-list" id="chat-session-list">
+                  {% for session in chat_widget.sessions %}
+                    <button class="chat-session-item {{ 'is-active' if session.id == chat_widget.current_session.id else '' }}" type="button" data-chat-session-target="{{ session.id }}">
+                      <strong>{{ session.title }}</strong>
+                      <small>{{ session.updated_at or session.created_at }}</small>
+                    </button>
+                  {% endfor %}
+                </div>
+              </div>
+            </details>
+            <button class="button button-primary button-small" id="new-chat-button" type="button">Nova</button>
+            <button class="button button-ghost button-small" id="chat-widget-close" type="button">Recolher</button>
+          </div>
+        </header>
+
+        <div class="chat-widget-meta">
+          <span class="badge" id="chat-pending-badge">{{ chat_widget.pending_authorizations }} autorizacoes pendentes</span>
+        </div>
+
+        <div class="gpt-messages chat-widget-messages" id="chat-messages">
+          {% if chat_widget.current_session.messages %}
+            {% for message in chat_widget.current_session.messages %}
+              <article class="chat-bubble {{ message.role }}">
+                <div class="chat-text">{{ message.content|nl2br }}</div>
+              </article>
+            {% endfor %}
+          {% endif %}
+
+          {% if chat_widget.chat_activities %}
+            {% for activity in chat_widget.chat_activities %}
+              <article class="chat-bubble assistant chat-bubble-activity" data-chat-activity>
+                <div class="chat-text">
+                  <div class="chat-activity-card">
+                    <strong>{{ activity.title }}</strong>
+                    <p>{{ activity.content }}</p>
+                    <div class="chat-activity-actions">
+                        {% for action in activity.actions %}
+                        {% if action.kind == 'api' %}
+                          <button
+                            class="chat-activity-option {{ 'is-primary' if loop.first else '' }}"
+                            type="button"
+                            data-chat-activity-action="{{ action.action }}"
+                            data-chat-activity-account="{{ action.account_id or '' }}"
+                            data-chat-activity-card="{{ action.card_number or '' }}"
+                            data-chat-activity-field="{{ action.field_key or '' }}"
+                            data-chat-activity-value="{{ action.value or '' }}"
+                            data-chat-activity-label="{{ action.label }}"
+                          >
+                            {{ action.label }}
+                          </button>
+                        {% else %}
+                          <a
+                            class="chat-activity-option {{ 'is-primary' if loop.first else '' }}"
+                            href="{{ action.href }}"
+                            {% if action.href[:4] == 'http' %}target="_blank" rel="noreferrer"{% endif %}
+                          >
+                            {{ action.label }}
+                          </a>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+              </article>
+            {% endfor %}
+          {% elif not chat_widget.current_session.messages %}
+            <section class="gpt-empty-state">
+              <div class="gpt-empty-copy">
+                <h1>Como posso ajudar com suas financas?</h1>
+                <p>Use o chat para perguntar sobre gastos, categorias, cartoes, recorrencias e variacoes por periodo.</p>
+              </div>
+              <div class="gpt-suggestion-grid">
+                <button class="gpt-suggestion" type="button" data-chat-suggestion="Quanto gastei no cartao este mes?">
+                  <strong>Gastos do mes</strong>
+                  <small>Quanto gastei no cartao este mes?</small>
+                </button>
+                <button class="gpt-suggestion" type="button" data-chat-suggestion="Quais categorias mais consumiram meu dinheiro nos ultimos 30 dias?">
+                  <strong>Top categorias</strong>
+                  <small>Quais categorias mais consumiram meu dinheiro nos ultimos 30 dias?</small>
+                </button>
+                <button class="gpt-suggestion" type="button" data-chat-suggestion="Liste minhas ultimas movimentacoes relevantes.">
+                  <strong>Ultimas movimentacoes</strong>
+                  <small>Liste minhas ultimas movimentacoes relevantes.</small>
+                </button>
+                <button class="gpt-suggestion" type="button" data-chat-suggestion="Me explique como meu saldo evoluiu por mes.">
+                  <strong>Evolucao do saldo</strong>
+                  <small>Me explique como meu saldo evoluiu por mes.</small>
+                </button>
+              </div>
+            </section>
+          {% endif %}
+        </div>
+
+        <form class="gpt-composer chat-widget-composer" id="chat-form">
+          <input type="hidden" id="chat-session-id" value="{{ chat_widget.current_session.id }}">
+          <div class="gpt-composer-box">
+            <textarea id="chat-input" rows="1" placeholder="{{ chat_widget.composer.placeholder }}"></textarea>
+            <button class="button button-primary button-small" id="chat-submit" type="submit">Enviar</button>
+          </div>
+        </form>
+      </section>
+    </div>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+  </body>
+</html>

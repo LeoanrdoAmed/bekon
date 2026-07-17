@@ -1,0 +1,685 @@
+﻿{% extends "base.html" %}
+{% block title %}Dashboard | Fin na Mao{% endblock %}
+{% block content %}
+  <section class="panel dashboard-filter-panel">
+    <div class="dashboard-filter-head">
+      <div class="dashboard-filter-copy">
+        <h2>Filtros</h2>
+      </div>
+    </div>
+    <form id="same-person-toggle-form" method="post" action="{{ url_for('main.toggle_same_person_transfer_preference') }}">
+      {{ csrf_input() }}
+      <input type="hidden" name="direction" value="geral">
+      <input type="hidden" name="enabled" value="{{ '0' if same_person_preferences.geral else '1' }}">
+      <input type="hidden" name="next_url" value="{{ dashboard_current_url }}">
+    </form>
+    <form method="get" class="dashboard-filter-form">
+      <div class="dashboard-filter-grid">
+        <label class="dashboard-filter-field">
+          <select name="period" aria-label="Periodo">
+            <option value="all" {% if dashboard_filters.period == 'all' %}selected{% endif %}>Periodo</option>
+            {% for option in dashboard_periods %}
+              {% if option.value != 'all' %}
+                <option value="{{ option.value }}" {% if dashboard_filters.period == option.value %}selected{% endif %}>{{ option.label }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+        </label>
+        <label class="dashboard-filter-field">
+          <select name="account_id" aria-label="Conta">
+            <option value="" {% if not dashboard_filters.account_id %}selected{% endif %}>Conta</option>
+            {% for account in accounts %}
+              <option value="{{ account.id }}" {% if dashboard_filters.account_id == account.id %}selected{% endif %}>{{ build_account_label(account) }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <label class="dashboard-filter-field">
+          <select name="card_number" aria-label="Cartao">
+            <option value="" {% if not dashboard_filters.card_number %}selected{% endif %}>Cartao</option>
+            {% for card in dashboard_cards %}
+              <option value="{{ card.value }}" {% if dashboard_filters.card_number == card.value %}selected{% endif %}>{{ card.label }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <label class="dashboard-filter-field">
+          <select name="category" aria-label="Categoria">
+            <option value="" {% if not dashboard_filters.category %}selected{% endif %}>Categoria</option>
+            {% for category in dashboard_categories %}
+              <option value="{{ category }}" {% if dashboard_filters.category == category %}selected{% endif %}>{{ category }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <label class="dashboard-filter-field">
+          <select name="direction" aria-label="Direcao">
+            <option value="" {% if not dashboard_filters.direction %}selected{% endif %}>Direcao</option>
+            <option value="entrada" {% if dashboard_filters.direction == 'entrada' %}selected{% endif %}>Entradas</option>
+            <option value="saida" {% if dashboard_filters.direction == 'saida' %}selected{% endif %}>Saidas</option>
+          </select>
+        </label>
+        <div class="dashboard-filter-range">
+          <div class="dashboard-filter-range-fields">
+            <label class="dashboard-filter-field">
+              <span>De</span>
+              <div class="dashboard-date-input" data-date-input>
+                <input type="date" name="date_start" value="{{ dashboard_filters.date_start }}" data-date-picker>
+                <button class="dashboard-date-trigger" type="button" data-open-date-picker aria-label="Abrir calendario inicial">
+                  <svg viewBox="0 0 24 24" role="img" focusable="false">
+                    <path d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a3 3 0 0 1 3 3v11a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h1V3a1 1 0 0 1 1-1Zm12 8H5v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-8ZM6 6a1 1 0 0 0-1 1v1h14V7a1 1 0 0 0-1-1H6Z"></path>
+                  </svg>
+                </button>
+              </div>
+            </label>
+            <label class="dashboard-filter-field">
+              <span>Ate</span>
+              <div class="dashboard-date-input" data-date-input>
+                <input type="date" name="date_end" value="{{ dashboard_filters.date_end }}" data-date-picker>
+                <button class="dashboard-date-trigger" type="button" data-open-date-picker aria-label="Abrir calendario final">
+                  <svg viewBox="0 0 24 24" role="img" focusable="false">
+                    <path d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a3 3 0 0 1 3 3v11a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h1V3a1 1 0 0 1 1-1Zm12 8H5v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-8ZM6 6a1 1 0 0 0-1 1v1h14V7a1 1 0 0 0-1-1H6Z"></path>
+                  </svg>
+                </button>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="dashboard-filter-footer">
+        <div class="dashboard-filter-toggles">
+          <button
+            class="dashboard-toggle-pill dashboard-toggle-form {{ 'is-on' if same_person_preferences.geral else 'is-off' }}"
+            type="submit"
+            form="same-person-toggle-form"
+          >
+            <span class="dashboard-toggle-copy">
+              <span>Mesma titularidade</span>
+              <strong>{{ 'Ativa' if same_person_preferences.geral else 'Ignorada' }}</strong>
+            </span>
+            <span class="dashboard-toggle-switch" aria-hidden="true">
+              <span class="dashboard-toggle-knob"></span>
+            </span>
+          </button>
+        </div>
+        <div class="dashboard-filter-cta">
+          <button class="button button-primary" type="submit">Aplicar filtros</button>
+          <a class="button button-ghost" href="{{ url_for('main.dashboard') }}">Limpar</a>
+        </div>
+      </div>
+    </form>
+  </section>
+
+  <section class="stats-grid dashboard-stats-grid">
+    <article class="stat-card accent-ink">
+      <span class="stat-label">Entradas</span>
+      <strong>{{ dash_money(summary.total_entradas) }}</strong>
+    </article>
+    <article class="stat-card accent-sand">
+      <span class="stat-label">Saidas</span>
+      <strong>{{ dash_money(summary.total_saidas) }}</strong>
+    </article>
+    <article class="stat-card accent-mint">
+      <span class="stat-label">Saldo liquido</span>
+      <strong>{{ dash_money(summary.saldo_liquido) }}</strong>
+    </article>
+    <article class="stat-card accent-coral">
+      <span class="stat-label">Categoria dominante</span>
+      <strong>
+        {% if summary.top_categories %}
+          {{ summary.top_categories[0].categoria }}
+        {% else %}
+          -
+        {% endif %}
+      </strong>
+    </article>
+  </section>
+
+  <section class="dashboard-grid dashboard-grid-analytics">
+    <article class="panel panel-span-2">
+      <div class="panel-head">
+        <h2>Fluxo por mes</h2>
+        <span>Entradas e saidas dos ultimos 6 meses do recorte</span>
+      </div>
+      {% if summary.monthly %}
+        <div class="monthly-flow-panel">
+          {% for item in monthly_flow_rows %}
+            <div class="monthly-flow-row">
+              <div class="monthly-flow-copy">
+                <strong>{{ item.label }}</strong>
+                <small>Saldo final {{ item.saldo_final_label }}</small>
+              </div>
+              <div class="monthly-flow-lines">
+                <div class="monthly-flow-line">
+                  <span class="monthly-flow-tag monthly-flow-tag-income">Entradas</span>
+                  <div class="monthly-flow-track">
+                    <div class="monthly-flow-fill monthly-flow-fill-income" style="width: {{ item.entradas_width_pct }}%"></div>
+                  </div>
+                  <strong class="monthly-flow-value monthly-flow-value-income">{{ item.entradas_label }}</strong>
+                </div>
+                <div class="monthly-flow-line">
+                  <span class="monthly-flow-tag monthly-flow-tag-expense">Saidas</span>
+                  <div class="monthly-flow-track">
+                    <div class="monthly-flow-fill monthly-flow-fill-expense" style="width: {{ item.saidas_width_pct }}%"></div>
+                  </div>
+                  <strong class="monthly-flow-value monthly-flow-value-expense">{{ item.saidas_label }}</strong>
+                </div>
+              </div>
+              <div class="monthly-flow-cash {{ 'positive' if item.geracao_caixa >= 0 else 'negative' }}">
+                <span>Caixa</span>
+                <strong>{{ item.geracao_caixa_label }}</strong>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="empty-state">Ainda nao ha meses suficientes para montar a serie.</p>
+      {% endif %}
+    </article>
+
+    <article class="panel balance-line-panel">
+      <div class="panel-head">
+        <h2>Saldo por mes</h2>
+        <span>Resultado liquido dos ultimos 6 meses do recorte</span>
+      </div>
+      {% if summary.monthly and monthly_balance_chart %}
+        <div class="balance-line-top">
+          <strong class="{{ 'positive' if monthly_balance_chart.latest_value >= 0 else 'negative' }}">
+            {{ dash_money(monthly_balance_chart.latest_value) }}
+          </strong>
+          <small>Saldo liquido do mes mais recente no recorte</small>
+        </div>
+        <div class="balance-line-shell">
+          <svg
+            class="balance-line-chart"
+            viewBox="0 0 {{ monthly_balance_chart.view_width }} {{ monthly_balance_chart.view_height }}"
+            preserveAspectRatio="xMidYMid meet"
+            aria-label="Grafico mensal de saldo liquido"
+            role="img"
+          >
+            {% for y in monthly_balance_chart.grid_lines %}
+              <line
+                class="balance-line-grid"
+                x1="{{ monthly_balance_chart.plot_left }}"
+                y1="{{ y }}"
+                x2="{{ monthly_balance_chart.view_width - monthly_balance_chart.plot_right }}"
+                y2="{{ y }}"
+              ></line>
+            {% endfor %}
+            {% if monthly_balance_chart.zero_line_y %}
+              <line
+                class="balance-line-zero"
+                x1="{{ monthly_balance_chart.plot_left }}"
+                y1="{{ monthly_balance_chart.zero_line_y }}"
+                x2="{{ monthly_balance_chart.view_width - monthly_balance_chart.plot_right }}"
+                y2="{{ monthly_balance_chart.zero_line_y }}"
+              ></line>
+            {% endif %}
+            {% if monthly_balance_chart.area_points %}
+              <polygon class="balance-line-area" points="{{ monthly_balance_chart.area_points }}"></polygon>
+            {% endif %}
+            {% if monthly_balance_chart.line_points %}
+              <polyline class="balance-line-stroke" points="{{ monthly_balance_chart.line_points }}"></polyline>
+              {% for point in monthly_balance_chart.points %}
+                <circle
+                  class="balance-line-point {{ 'is-positive' if point.value >= 0 else 'is-negative' }}"
+                  cx="{{ point.x }}"
+                  cy="{{ point.y }}"
+                  r="4.5"
+                ></circle>
+              {% endfor %}
+            {% endif %}
+            {% for value_label in monthly_balance_chart.value_labels %}
+              <text
+                class="balance-line-value-label balance-line-value-label-{{ value_label.tone }}"
+                x="{{ value_label.x }}"
+                y="{{ value_label.y }}"
+              >
+                {{ value_label.text }}
+              </text>
+            {% endfor %}
+            {% for label in monthly_balance_chart.labels %}
+              <text class="balance-line-label" x="{{ label.x }}" y="{{ label.y }}">{{ label.text }}</text>
+            {% endfor %}
+          </svg>
+        </div>
+      {% else %}
+        <p class="empty-state">Ainda nao ha meses suficientes para montar a linha de saldo.</p>
+      {% endif %}
+    </article>
+
+    <article class="panel weekly-expense-panel">
+      <div class="panel-head">
+        <h2>Gastos essa semana</h2>
+        <span>{{ summary.weekly_expenses.range_label if summary.weekly_expenses else 'Ultimos 7 dias do recorte' }}</span>
+      </div>
+      {% if summary.weekly_expenses and summary.weekly_expenses.days %}
+        <div class="weekly-expense-top">
+          <div class="weekly-expense-total">
+            <strong>{{ dash_money(summary.weekly_expenses.total) }}</strong>
+            <small class="weekly-expense-trend weekly-expense-trend-{{ summary.weekly_expenses.trend_tone }}">
+              {{ summary.weekly_expenses.trend_text }}
+            </small>
+          </div>
+          <div class="weekly-expense-scale">
+            <span>{{ dash_money(summary.weekly_expenses.scale_top) }}</span>
+            <span>R$ 0</span>
+          </div>
+        </div>
+        <div class="weekly-expense-chart">
+          {% for day in summary.weekly_expenses.days %}
+            <div class="weekly-expense-day">
+              <div class="weekly-expense-bar-shell">
+                {% if day.is_empty %}
+                  <span class="weekly-expense-dot"></span>
+                {% else %}
+                  <span
+                    class="weekly-expense-bar {{ 'is-peak' if day.is_peak else '' }}"
+                    style="height: {{ day.height_pct }}%"
+                  ></span>
+                {% endif %}
+              </div>
+              <strong class="weekly-expense-day-label">{{ day.label }}</strong>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="empty-state">Ainda nao ha gastos suficientes para montar a semana.</p>
+      {% endif %}
+    </article>
+
+    <article class="panel panel-span-2">
+      <div class="panel-head">
+        <h2>Caixa por mes</h2>
+        <span>Saldo inicial, entradas, saidas, geracao e saldo final</span>
+      </div>
+      {% if summary.monthly_cash %}
+        <div class="table-wrap summary-table-wrap">
+          <table class="summary-table">
+            <thead>
+              <tr>
+                <th>Indicador</th>
+                {% for item in summary.monthly_cash %}
+                  <th>{{ item.label }}</th>
+                {% endfor %}
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Saldo inicial</th>
+                {% for item in summary.monthly_cash %}
+                  <td>{{ dash_money(item.saldo_inicial) }}</td>
+                {% endfor %}
+              </tr>
+              <tr>
+                <th scope="row">Entradas</th>
+                {% for item in summary.monthly_cash %}
+                  <td class="positive">{{ dash_money(item.entradas) }}</td>
+                {% endfor %}
+              </tr>
+              <tr>
+                <th scope="row">Saidas</th>
+                {% for item in summary.monthly_cash %}
+                  <td class="negative">{{ dash_money(-item.saidas) }}</td>
+                {% endfor %}
+              </tr>
+              <tr>
+                <th scope="row">Geracao de caixa</th>
+                {% for item in summary.monthly_cash %}
+                  <td class="{{ 'positive' if item.geracao_caixa >= 0 else 'negative' }}">{{ dash_money(item.geracao_caixa) }}</td>
+                {% endfor %}
+              </tr>
+              <tr>
+                <th scope="row">Saldo final</th>
+                {% for item in summary.monthly_cash %}
+                  <td class="{{ 'positive' if item.saldo_final >= 0 else 'negative' }}">{{ dash_money(item.saldo_final) }}</td>
+                {% endfor %}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <p class="empty-state">Nao ha meses suficientes para montar a tabela de caixa.</p>
+      {% endif %}
+    </article>
+
+    <article class="panel panel-span-2">
+      <div class="panel-head">
+        <h2>Categorias que mais pesam</h2>
+        <span>Peso das movimentacoes por categoria</span>
+      </div>
+      {% if category_chart and category_chart.slices %}
+        <div class="category-donut-layout">
+          <div class="category-donut-hero">
+            <div class="category-donut-shell">
+            <svg
+              class="category-donut-chart"
+              viewBox="0 0 {{ category_chart.size }} {{ category_chart.size }}"
+              preserveAspectRatio="xMidYMid meet"
+              role="img"
+              aria-label="Distribuicao de categorias por valor movimentado"
+            >
+              <circle
+                class="category-donut-track"
+                cx="{{ category_chart.center }}"
+                cy="{{ category_chart.center }}"
+                r="{{ category_chart.radius }}"
+              ></circle>
+              {% for slice in category_chart.slices %}
+                <circle
+                  class="category-donut-segment"
+                  cx="{{ category_chart.center }}"
+                  cy="{{ category_chart.center }}"
+                  r="{{ category_chart.radius }}"
+                  stroke="{{ slice.stroke }}"
+                  stroke-dasharray="{{ slice.dasharray }}"
+                  stroke-dashoffset="{{ slice.dashoffset }}"
+                ></circle>
+              {% endfor %}
+            </svg>
+            </div>
+            <div class="category-donut-overview">
+              <span class="category-donut-overview-title">
+                <span class="category-icon-badge" aria-hidden="true">{{ category_chart.dominant_icon|safe }}</span>
+                <span>{{ category_chart.dominant_label }} lidera o recorte</span>
+              </span>
+              <strong>{{ dash_money(category_chart.total) }}</strong>
+              <small class="category-donut-overview-note">{{ category_chart.slices|length }} categorias - {{ dash_pct(category_chart.dominant_share) }} concentrados na principal</small>
+            </div>
+          </div>
+          <div class="category-accordion-list">
+            {% for item in category_details[:5] %}
+              <details class="category-accordion-item">
+                <summary class="category-accordion-summary">
+                  <span class="category-identity">
+                    <span class="category-donut-swatch" style="background: {{ item.stroke }}"></span>
+                    <span class="category-icon-badge" aria-hidden="true">{{ item.icon|safe }}</span>
+                  </span>
+                  <div class="category-donut-copy">
+                    <strong>{{ item.categoria }}</strong>
+                    <small>{{ item.transaction_count }} transacoes - {{ dash_pct(item.share) }} do volume filtrado</small>
+                  </div>
+                  <strong class="category-donut-value">{{ dash_money(item.valor) }}</strong>
+                  <span class="category-accordion-chevron" aria-hidden="true"></span>
+                </summary>
+                <div class="category-accordion-body">
+                  <div class="category-accordion-meta">
+                    <strong>Transacoes da categoria</strong>
+                    <small>
+                      Mostrando {{ item.transactions|length }}
+                      {% if item.has_more_transactions %} de {{ item.transaction_count }}{% endif %}
+                    </small>
+                  </div>
+                  <div class="category-accordion-transactions">
+                    {% for tx in item.transactions %}
+                      <div class="category-accordion-transaction">
+                        <div class="category-accordion-copy">
+                          <strong>{{ tx.descricao }}</strong>
+                          <small>{{ tx.data }} - {{ tx.scope_label }}</small>
+                        </div>
+                        <strong class="{{ 'positive' if tx.valor > 0 else 'negative' }}">{{ dash_money(tx.valor) }}</strong>
+                      </div>
+                    {% endfor %}
+                  </div>
+                </div>
+              </details>
+            {% endfor %}
+            {% if category_details|length > 5 %}
+              <details class="category-more">
+                <summary class="category-more-summary">
+                  <span>Ver mais</span>
+                  <small>+{{ category_details|length - 5 }} categorias</small>
+                  <span class="category-accordion-chevron" aria-hidden="true"></span>
+                </summary>
+                <div class="category-more-body">
+                  {% for item in category_details[5:] %}
+                    <details class="category-accordion-item">
+                      <summary class="category-accordion-summary">
+                        <span class="category-identity">
+                          <span class="category-donut-swatch" style="background: {{ item.stroke }}"></span>
+                          <span class="category-icon-badge" aria-hidden="true">{{ item.icon|safe }}</span>
+                        </span>
+                        <div class="category-donut-copy">
+                          <strong>{{ item.categoria }}</strong>
+                          <small>{{ item.transaction_count }} transacoes - {{ dash_pct(item.share) }} do volume filtrado</small>
+                        </div>
+                        <strong class="category-donut-value">{{ dash_money(item.valor) }}</strong>
+                        <span class="category-accordion-chevron" aria-hidden="true"></span>
+                      </summary>
+                      <div class="category-accordion-body">
+                        <div class="category-accordion-meta">
+                          <strong>Transacoes da categoria</strong>
+                          <small>
+                            Mostrando {{ item.transactions|length }}
+                            {% if item.has_more_transactions %} de {{ item.transaction_count }}{% endif %}
+                          </small>
+                        </div>
+                        <div class="category-accordion-transactions">
+                          {% for tx in item.transactions %}
+                            <div class="category-accordion-transaction">
+                              <div class="category-accordion-copy">
+                                <strong>{{ tx.descricao }}</strong>
+                                <small>{{ tx.data }} - {{ tx.scope_label }}</small>
+                              </div>
+                              <strong class="{{ 'positive' if tx.valor > 0 else 'negative' }}">{{ dash_money(tx.valor) }}</strong>
+                            </div>
+                          {% endfor %}
+                        </div>
+                      </div>
+                    </details>
+                  {% endfor %}
+                </div>
+              </details>
+            {% endif %}
+          </div>
+        </div>
+      {% else %}
+        <p class="empty-state">As categorias aparecem apos a primeira sincronizacao.</p>
+      {% endif %}
+    </article>
+
+    <article class="panel">
+      <div class="panel-head">
+        <h2>Subcategorias em destaque</h2>
+        <span>Mais detalhe para leitura do recorte</span>
+      </div>
+      {% if subcategory_details %}
+        <div class="subcategory-accordion-list">
+          {% for item in subcategory_details[:5] %}
+            <details class="subcategory-accordion-item">
+              <summary class="subcategory-accordion-summary">
+                <div class="metric-bar-copy metric-bar-copy-icon">
+                  <span class="category-icon-badge" aria-hidden="true">{{ item.icon|safe }}</span>
+                  <div class="metric-bar-copy-stack">
+                    <strong>{{ item.subcategoria }}</strong>
+                    <small>{{ item.transaction_count }} transacoes - {{ dash_pct(item.share) }} do volume filtrado</small>
+                  </div>
+                </div>
+                <div class="metric-bar-track">
+                  <div class="metric-bar-fill metric-bar-fill-sand" style="width: {{ item.width_pct }}%"></div>
+                </div>
+                <strong class="metric-bar-value">{{ dash_money(item.valor) }}</strong>
+                <span class="category-accordion-chevron" aria-hidden="true"></span>
+              </summary>
+              <div class="category-accordion-body">
+                <div class="category-accordion-meta">
+                  <strong>Transacoes da subcategoria</strong>
+                  <small>
+                    Mostrando {{ item.transactions|length }}
+                    {% if item.has_more_transactions %} de {{ item.transaction_count }}{% endif %}
+                  </small>
+                </div>
+                <div class="category-accordion-transactions">
+                  {% for tx in item.transactions %}
+                    <div class="category-accordion-transaction">
+                      <div class="category-accordion-copy">
+                        <strong>{{ tx.descricao }}</strong>
+                        <small>{{ tx.data }} - {{ tx.categoria }} - {{ tx.scope_label }}</small>
+                      </div>
+                      <strong class="{{ 'positive' if tx.valor > 0 else 'negative' }}">{{ dash_money(tx.valor) }}</strong>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            </details>
+          {% endfor %}
+          {% if subcategory_details|length > 5 %}
+            <details class="category-more">
+              <summary class="category-more-summary">
+                <span>Ver mais</span>
+                <small>+{{ subcategory_details|length - 5 }} subcategorias</small>
+                <span class="category-accordion-chevron" aria-hidden="true"></span>
+              </summary>
+              <div class="category-more-body">
+                {% for item in subcategory_details[5:] %}
+                  <details class="subcategory-accordion-item">
+                    <summary class="subcategory-accordion-summary">
+                      <div class="metric-bar-copy metric-bar-copy-icon">
+                        <span class="category-icon-badge" aria-hidden="true">{{ item.icon|safe }}</span>
+                        <div class="metric-bar-copy-stack">
+                          <strong>{{ item.subcategoria }}</strong>
+                          <small>{{ item.transaction_count }} transacoes - {{ dash_pct(item.share) }} do volume filtrado</small>
+                        </div>
+                      </div>
+                      <div class="metric-bar-track">
+                        <div class="metric-bar-fill metric-bar-fill-sand" style="width: {{ item.width_pct }}%"></div>
+                      </div>
+                      <strong class="metric-bar-value">{{ dash_money(item.valor) }}</strong>
+                      <span class="category-accordion-chevron" aria-hidden="true"></span>
+                    </summary>
+                    <div class="category-accordion-body">
+                      <div class="category-accordion-meta">
+                        <strong>Transacoes da subcategoria</strong>
+                        <small>
+                          Mostrando {{ item.transactions|length }}
+                          {% if item.has_more_transactions %} de {{ item.transaction_count }}{% endif %}
+                        </small>
+                      </div>
+                      <div class="category-accordion-transactions">
+                        {% for tx in item.transactions %}
+                          <div class="category-accordion-transaction">
+                            <div class="category-accordion-copy">
+                              <strong>{{ tx.descricao }}</strong>
+                              <small>{{ tx.data }} - {{ tx.categoria }} - {{ tx.scope_label }}</small>
+                            </div>
+                            <strong class="{{ 'positive' if tx.valor > 0 else 'negative' }}">{{ dash_money(tx.valor) }}</strong>
+                          </div>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </details>
+                {% endfor %}
+              </div>
+            </details>
+          {% endif %}
+        </div>
+      {% else %}
+        <p class="empty-state">As subcategorias aparecem conforme as importacoes forem entrando.</p>
+      {% endif %}
+    </article>
+
+    <article class="panel">
+      <div class="panel-head">
+        <h2>Volume por conta</h2>
+        <span>Onde o recorte mais se movimenta</span>
+      </div>
+      {% if summary.account_breakdown %}
+        <div class="metric-bar-list">
+          {% for item in summary.account_breakdown %}
+            <div class="metric-bar-row metric-bar-row-account">
+              <div class="metric-bar-account-top">
+                <div class="metric-bar-copy">
+                  <strong>{{ item.label }}</strong>
+                  <small>{{ item.transacoes }} transacoes</small>
+                </div>
+                <div class="metric-bar-account-numbers">
+                  <strong class="metric-bar-value">{{ dash_money(item.movimentado) }}</strong>
+                  <small class="{{ 'positive' if item.saldo >= 0 else 'negative' }}">Saldo {{ dash_money(item.saldo) }}</small>
+                </div>
+              </div>
+              <div class="metric-bar-track">
+                <div class="metric-bar-fill metric-bar-fill-neutral" style="width: {{ ((item.movimentado / account_max) * 100) if account_max else 0 }}%"></div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="empty-state">As contas aparecem aqui assim que houver movimentacoes importadas.</p>
+      {% endif %}
+    </article>
+
+    <article class="panel panel-span-2">
+      <div class="panel-head">
+        <div>
+          <h2>Movimentacoes</h2>
+          <span>
+            {% if dashboard_tx_pagination.total_items %}
+              Mostrando {{ dashboard_tx_pagination.start_item }}-{{ dashboard_tx_pagination.end_item }} de {{ dashboard_tx_pagination.total_items }}
+            {% else %}
+              Nenhuma movimentacao encontrada no recorte atual
+            {% endif %}
+          </span>
+        </div>
+        <button class="button button-ghost button-small" type="button" data-open-chat-widget>Perguntar no chat</button>
+      </div>
+      {% if dashboard_transactions %}
+        <div class="table-wrap">
+          <table class="tx-table">
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Descricao</th>
+                <th>Categoria</th>
+                <th>Conta / escopo</th>
+                <th>Valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for tx in dashboard_transactions %}
+                <tr>
+                  <td>{{ tx.data }}</td>
+                  <td>
+                    <strong>{{ tx.descricao }}</strong>
+                    <small>{{ tx.statement_type }}{% if tx.card_number %} - final {{ tx.card_number }}{% endif %}</small>
+                  </td>
+                  <td>
+                    <strong>{{ tx.categoria }}</strong>
+                    {% if tx.subcategoria %}
+                      <small>{{ tx.subcategoria }}</small>
+                    {% endif %}
+                  </td>
+                  <td>{{ tx.account_label }}</td>
+                  <td class="{{ 'positive' if tx.valor > 0 else 'negative' }}">{{ dash_money(tx.valor) }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% if dashboard_tx_pagination.total_pages > 1 %}
+          <div class="table-pagination">
+            <div class="table-pagination-links">
+              {% if dashboard_tx_pagination.prev_url %}
+                <a class="button button-ghost button-small" href="{{ dashboard_tx_pagination.prev_url }}">Anterior</a>
+              {% endif %}
+              {% for item in dashboard_tx_pagination.pages %}
+                {% if item.gap %}
+                  <span class="table-pagination-gap">...</span>
+                {% else %}
+                  <a
+                    class="button button-small {{ 'button-primary' if item.current else 'button-ghost' }}"
+                    href="{{ item.url }}"
+                  >
+                    {{ item.number }}
+                  </a>
+                {% endif %}
+              {% endfor %}
+              {% if dashboard_tx_pagination.next_url %}
+                <a class="button button-ghost button-small" href="{{ dashboard_tx_pagination.next_url }}">Proxima</a>
+              {% endif %}
+            </div>
+          </div>
+        {% endif %}
+      {% else %}
+        <p class="empty-state">Sincronize uma conta ou um cartao para carregar movimentacoes.</p>
+      {% endif %}
+    </article>
+  </section>
+{% endblock %}
+

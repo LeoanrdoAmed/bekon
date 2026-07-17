@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Perfil | Fin na Mao{% endblock %}
+{% block content %}
+  <section class="stats-grid">
+    <article class="stat-card accent-ink">
+      <span class="stat-label">Etapa atual</span>
+      <strong>{{ onboarding_stage_number }}/4</strong>
+    </article>
+    <article class="stat-card accent-mint">
+      <span class="stat-label">Contas</span>
+      <strong>{{ total_accounts }}</strong>
+    </article>
+    <article class="stat-card accent-sand">
+      <span class="stat-label">Cartoes</span>
+      <strong>{{ total_cards }}</strong>
+    </article>
+    <article class="stat-card accent-coral">
+      <span class="stat-label">Cadastro base</span>
+      <strong>{{ 'Concluido' if setup_complete else 'Em andamento' }}</strong>
+    </article>
+  </section>
+
+  <section class="profile-layout">
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>Perfil do cliente</h2>
+          <span>Dados base informados no cadastro e atualizados no painel</span>
+        </div>
+        <div class="hero-actions">
+          <a class="button button-secondary" href="{{ url_for('main.connections') }}">Configuracao</a>
+          <button class="button button-primary" type="button" data-open-chat-widget>Abrir chat</button>
+        </div>
+      </div>
+      <div class="profile-section-list">
+        {% for section in profile_sections %}
+          <article class="static-card">
+            <div class="tile-static-head">
+              <strong>{{ section["title"] }}</strong>
+            </div>
+            <div class="profile-grid">
+              {% for item in section["items"] %}
+                <details class="profile-item profile-item-editable">
+                  <summary class="profile-item-head">
+                    <div class="profile-item-copy">
+                      <span>{{ item["label"] }}</span>
+                      <strong>{{ item["value"] }}</strong>
+                    </div>
+                    <span class="profile-edit-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" role="img" focusable="false">
+                        <path d="M4 16.25V20h3.75l11-11-3.75-3.75-11 11Zm14.71-9.04a1.003 1.003 0 0 0 0-1.42L16.21 3.29a1.003 1.003 0 0 0-1.42 0L13.13 4.95l3.75 3.75 1.83-1.49Z"></path>
+                      </svg>
+                    </span>
+                  </summary>
+                  <form method="post" class="stack-form profile-inline-form">
+                    {{ csrf_input() }}
+                    <input type="hidden" name="field_key" value="{{ item['key'] }}">
+                    <label>
+                      <span>Novo valor</span>
+                      <input
+                        type="{{ item['input_type'] }}"
+                        name="field_value"
+                        value="{{ item['raw_value'] }}"
+                        placeholder="{{ item['placeholder'] }}"
+                        {% if item['input_mode'] %}inputmode="{{ item['input_mode'] }}"{% endif %}
+                        {% if item['required'] %}required{% endif %}
+                      >
+                    </label>
+                    <div class="profile-inline-actions">
+                      <button class="button button-primary button-small" type="submit">Salvar</button>
+                    </div>
+                  </form>
+                </details>
+              {% endfor %}
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+  </section>
+{% endblock %}

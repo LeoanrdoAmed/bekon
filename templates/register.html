@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{{ 'Cadastrar Usuario' if authenticated else 'Criar Acesso' }} | Fin na Mao</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.svg') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
+  </head>
+  <body data-page="register">
+    <main class="register-gpt-shell">
+      <section class="gpt-main register-gpt-main">
+        <header class="register-gpt-head">
+          <span class="register-gpt-kicker">{{ 'Novo usuario' if authenticated else 'Novo cadastro' }}</span>
+          {% if authenticated %}
+            <a class="register-gpt-back" href="{{ url_for('main.dashboard') }}">Fechar</a>
+          {% else %}
+            <a class="register-gpt-back" href="{{ url_for('main.login', next=next_url) }}">Voltar ao login</a>
+          {% endif %}
+        </header>
+
+        <form method="post" class="register-chat-form">
+          {{ csrf_input() }}
+          <input type="hidden" name="next" value="{{ next_url }}">
+
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              <section class="flash-stack auth-flash-stack register-gpt-flash">
+                {% for category, message in messages %}
+                  <div class="flash flash-{{ category }}">{{ message }}</div>
+                {% endfor %}
+              </section>
+            {% endif %}
+          {% endwith %}
+
+          <div
+            class="register-flow"
+            data-register-flow
+            data-register-authenticated="{{ '1' if authenticated else '0' }}"
+            data-register-claimable-tenant="{{ claimable_tenant.name if (not authenticated and claimable_tenant) else '' }}"
+            data-register-tenant-name="{{ current_tenant_name if authenticated else '' }}"
+          >
+            <div class="register-hidden-steps" aria-hidden="true">
+              {% if not authenticated %}
+                {% for item in register_profile_fields %}
+                  <label
+                    class="register-hidden-step"
+                    data-register-step
+                    data-step-key="{{ item.key }}"
+                    data-step-label="{{ item.label }}"
+                    data-step-question="{{ item.question }}"
+                    data-step-required="{{ '1' if item.required else '0' }}"
+                    data-step-display="{{ 'document' if item.key == 'cpf' else item.key }}"
+                  >
+                    <input
+                      type="{{ item.input_type }}"
+                      name="{{ item.key }}"
+                      value="{{ form_data[item.key] }}"
+                      placeholder="{{ item.placeholder }}"
+                      {% if item.input_mode %}inputmode="{{ item.input_mode }}"{% endif %}
+                      {% if item.key in ['nome', 'logradouro', 'bairro', 'cidade'] %}autocapitalize="words"{% endif %}
+                      {% if item.key == 'estado' %}maxlength="2"{% endif %}
+                      {% if item.required %}required{% endif %}
+                    >
+                  </label>
+                {% endfor %}
+              {% endif %}
+
+              <label
+                class="register-hidden-step"
+                data-register-step
+                data-step-key="username"
+                data-step-label="Usuario"
+                data-step-question="{{ 'Qual usuario deseja cadastrar para esta licenca?' if authenticated else 'Qual usuario vai acessar o painel dessa conta?' }}"
+                data-step-required="1"
+                data-step-display="username"
+              >
+                <input
+                  type="text"
+                  name="username"
+                  value="{{ form_data.username }}"
+                  autocomplete="username"
+                  autocapitalize="off"
+                  spellcheck="false"
+                  placeholder="ex.: operador.financeiro"
+                  required
+                >
+              </label>
+
+              {% if authenticated %}
+                <label
+                  class="register-hidden-step"
+                  data-register-step
+                  data-step-key="email"
+                  data-step-label="E-mail"
+                  data-step-question="Quer vincular um e-mail a esse novo usuario?"
+                  data-step-required="0"
+                  data-step-display="email"
+                >
+                  <input
+                    type="email"
+                    name="email"
+                    value="{{ form_data.email }}"
+                    autocomplete="email"
+                    placeholder="opcional"
+                  >
+                </label>
+              {% endif %}
+
+              <label
+                class="register-hidden-step"
+                data-register-step
+                data-step-key="password"
+                data-step-label="Senha"
+                data-step-question="Agora defina uma senha com pelo menos 8 caracteres."
+                data-step-required="1"
+                data-step-display="secret"
+              >
+                <input
+                  type="password"
+                  name="password"
+                  autocomplete="new-password"
+                  minlength="8"
+                  placeholder="Minimo de 8 caracteres"
+                  required
+                >
+              </label>
+
+              <label
+                class="register-hidden-step"
+                data-register-step
+                data-step-key="password_confirm"
+                data-step-label="Confirmar senha"
+                data-step-question="Repita a senha para confirmar o acesso."
+                data-step-required="1"
+                data-step-display="secret-confirm"
+              >
+                <input
+                  type="password"
+                  name="password_confirm"
+                  autocomplete="new-password"
+                  minlength="8"
+                  placeholder="Repita a senha"
+                  required
+                >
+              </label>
+            </div>
+
+            <div class="gpt-messages register-chat-messages" id="register-chat-messages"></div>
+
+            <div class="gpt-composer register-chat-composer">
+              <div class="register-chat-footer">
+                <div class="register-chat-footer-actions">
+                  <span class="register-chat-chip" data-register-progress></span>
+                  <span class="register-chat-chip register-chat-note" data-register-note></span>
+                  <button class="button button-ghost button-small" type="button" data-register-prev hidden>Voltar</button>
+                  <button class="button button-ghost button-small" type="button" data-register-skip hidden>Pular</button>
+                </div>
+              </div>
+
+              <div class="gpt-composer-box register-chat-composer-box" data-register-composer-box>
+                <span class="register-chat-accessory" aria-hidden="true">+</span>
+                <input id="register-chat-input" type="text" autocomplete="off" placeholder="">
+                <button class="button button-primary button-small" type="button" data-register-next aria-label="Enviar" title="Enviar">
+                  <svg class="register-chat-send-icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                    <path d="M10 15V5"></path>
+                    <path d="M6 9l4-4 4 4"></path>
+                  </svg>
+                </button>
+                <button class="button button-primary button-small" type="submit" data-register-submit hidden>{{ 'Cadastrar usuario' if authenticated else 'Criar acesso e continuar' }}</button>
+              </div>
+
+              <button class="button button-primary register-fallback-submit" type="submit" data-register-fallback-submit hidden>{{ 'Cadastrar usuario' if authenticated else 'Criar acesso e continuar' }}</button>
+            </div>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+  </body>
+</html>

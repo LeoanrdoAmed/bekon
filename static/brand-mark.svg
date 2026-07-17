@@ -1,0 +1,14 @@
+<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="brandMarkTitle">
+  <title id="brandMarkTitle">Marca Fin na Mao</title>
+  <defs>
+    <linearGradient id="markGold" x1="40" y1="12" x2="78" y2="80" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F0C94F"/>
+      <stop offset="1" stop-color="#D7AE17"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="92" height="92" rx="26" fill="#0E1013" stroke="#FFFFFF" stroke-opacity="0.06"/>
+  <path d="M16 61L34 25L47 32L32 75L16 61Z" fill="#26292F"/>
+  <path d="M13 61L33 78L59 71L52 57L31 63L21 53L13 61Z" fill="#343840"/>
+  <path d="M41 74L60 18L82 26L63 82L41 74Z" fill="url(#markGold)"/>
+  <circle cx="73" cy="18" r="7" fill="#F0C94F"/>
+</svg>

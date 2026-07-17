@@ -1,0 +1,23 @@
+<svg width="520" height="120" viewBox="0 0 520 120" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="logoTitle logoDesc">
+  <title id="logoTitle">Fin na Mao</title>
+  <desc id="logoDesc">Logo do aplicativo Fin na Mao em preto, grafite e dourado.</desc>
+  <defs>
+    <linearGradient id="goldStroke" x1="40" y1="14" x2="92" y2="86" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F0C94F"/>
+      <stop offset="1" stop-color="#D7AE17"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(10 10)">
+    <rect x="0" y="0" width="100" height="100" rx="28" fill="#0E1013" stroke="#FFFFFF" stroke-opacity="0.06"/>
+    <path d="M18 66L37 28L51 35L35 79L18 66Z" fill="#26292F"/>
+    <path d="M15 66L36 84L63 76L56 61L34 67L23 57L15 66Z" fill="#343840"/>
+    <path d="M44 78L64 20L87 28L67 86L44 78Z" fill="url(#goldStroke)"/>
+    <circle cx="77" cy="18" r="8" fill="#F0C94F"/>
+  </g>
+  <g transform="translate(132 26)">
+    <text x="0" y="36" fill="#F5F7FB" font-family="Space Grotesk, Segoe UI, Arial, sans-serif" font-size="44" font-weight="700" letter-spacing="-0.04em">Fin</text>
+    <text x="76" y="36" fill="#98A2B3" font-family="Space Grotesk, Segoe UI, Arial, sans-serif" font-size="44" font-weight="500" letter-spacing="-0.04em">na</text>
+    <text x="142" y="36" fill="#D7AE17" font-family="Space Grotesk, Segoe UI, Arial, sans-serif" font-size="44" font-weight="700" letter-spacing="-0.04em">Mao</text>
+    <text x="2" y="66" fill="#697386" font-family="Space Grotesk, Segoe UI, Arial, sans-serif" font-size="14" font-weight="500" letter-spacing="0.02em">Open Finance privado e assistente financeiro</text>
+  </g>
+</svg>

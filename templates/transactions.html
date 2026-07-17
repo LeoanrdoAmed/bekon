@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Transacoes | Fin na Mao{% endblock %}
+{% block content %}
+  <section class="panel">
+    <form method="get" class="filter-row">
+      <label>
+        <span>Conta</span>
+        <select name="account_id">
+          <option value="">Todas</option>
+          {% for account in accounts %}
+            <option value="{{ account.id }}" {% if filters.account_id == account.id %}selected{% endif %}>{{ build_account_label(account) }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>
+        <span>Cartao</span>
+        <select name="card_number">
+          <option value="">Todos</option>
+          {% for card in all_cards %}
+            <option value="{{ card.value }}" {% if filters.card_number == card.value %}selected{% endif %}>{{ card.label }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label><span>Data inicial</span><input type="date" name="date_start" value="{{ filters.date_start }}"></label>
+      <label><span>Data final</span><input type="date" name="date_end" value="{{ filters.date_end }}"></label>
+      <button class="button button-primary" type="submit">Aplicar</button>
+      <a class="button button-ghost" href="{{ url_for('main.transactions_view') }}">Limpar</a>
+    </form>
+  </section>
+
+  <section class="stats-grid">
+    <article class="stat-card accent-ink">
+      <span class="stat-label">Entradas</span>
+      <strong>{{ money(summary.total_entradas) }}</strong>
+    </article>
+    <article class="stat-card accent-sand">
+      <span class="stat-label">Saidas</span>
+      <strong>{{ money(summary.total_saidas) }}</strong>
+    </article>
+    <article class="stat-card accent-mint">
+      <span class="stat-label">Saldo</span>
+      <strong>{{ money(summary.saldo_liquido) }}</strong>
+    </article>
+    <article class="stat-card accent-coral">
+      <span class="stat-label">Linhas</span>
+      <strong>{{ transactions|length }}</strong>
+    </article>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Lista de movimentacoes</h2>
+      <button class="button button-ghost button-small" type="button" data-open-chat-widget>Perguntar sobre esse conjunto</button>
+    </div>
+    {% if transactions %}
+      <div class="table-wrap">
+        <table class="tx-table">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Descricao</th>
+              <th>Categoria</th>
+              <th>Conta / escopo</th>
+              <th>Valor</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for tx in transactions %}
+              <tr>
+                <td>{{ tx.data }}</td>
+                <td>
+                  <strong>{{ tx.descricao }}</strong>
+                  <small>{{ tx.statement_type }}{% if tx.card_number %} - final {{ tx.card_number }}{% endif %}</small>
+                </td>
+                <td>
+                  <strong>{{ tx.categoria }}</strong>
+                  {% if tx.subcategoria %}
+                    <small>{{ tx.subcategoria }}</small>
+                  {% endif %}
+                </td>
+                <td>{{ tx.account_label }}</td>
+                <td class="{{ 'positive' if tx.valor > 0 else 'negative' }}">{{ money(tx.valor) }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="empty-state">Nenhuma transacao encontrada para o filtro atual.</p>
+    {% endif %}
+  </section>
+{% endblock %}

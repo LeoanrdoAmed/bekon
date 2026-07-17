@@ -1,0 +1,23 @@
+.git
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+node_modules/
+.DS_Store
+Thumbs.db
+
+# Segredos e dados operacionais
+.env
+.env.*
+!*.example
+dados/
+_deploy/
+*.jsonl
+*.tgz

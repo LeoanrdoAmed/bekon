@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Chat | Fin na Mao{% endblock %}
+{% block content %}
+  <section class="gpt-chat-shell" id="chat-app" data-session-id="{{ current_session.id }}">
+    <aside class="gpt-sidebar">
+      <div class="gpt-sidebar-top">
+        <button class="button button-primary button-small w-full" id="new-chat-button" type="button">Nova conversa</button>
+      </div>
+      <div class="gpt-sidebar-group">
+        <small class="gpt-sidebar-label">Conversas</small>
+        <div class="chat-session-list">
+          {% for session in sessions %}
+            <a class="chat-session-item {{ 'is-active' if session.id == current_session.id else '' }}" href="{{ url_for('main.chat_view', session_id=session.id) }}">
+              <strong>{{ session.title }}</strong>
+              <small>{{ session.updated_at or session.created_at }}</small>
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="gpt-sidebar-footer">
+        <div class="rail-summary-item">
+          <span>Saldo consolidado</span>
+          <strong>{{ money(summary.total_entradas - summary.total_saidas) }}</strong>
+        </div>
+      </div>
+    </aside>
+
+    <section class="gpt-main">
+      <header class="gpt-main-head">
+        <div>
+          <strong>Fin na Mao</strong>
+          <small>Assistente financeiro conversacional</small>
+        </div>
+        <span class="badge">{{ pending_authorizations }} autorizacoes pendentes</span>
+      </header>
+
+      <div class="gpt-messages" id="chat-messages">
+        {% if current_session.messages %}
+          {% for message in current_session.messages %}
+            <article class="chat-bubble {{ message.role }}">
+              <div class="chat-text">{{ message.content|nl2br }}</div>
+            </article>
+          {% endfor %}
+        {% endif %}
+
+        {% if chat_activities %}
+          {% for activity in chat_activities %}
+            <article class="chat-bubble assistant chat-bubble-activity" data-chat-activity>
+              <div class="chat-text">
+                <div class="chat-activity-card">
+                  <strong>{{ activity.title }}</strong>
+                  <p>{{ activity.content }}</p>
+                  <div class="chat-activity-actions">
+                    {% for action in activity.actions %}
+                      {% if action.kind == 'api' %}
+                        <button
+                          class="button button-small {{ 'button-primary' if loop.first else 'button-ghost' }}"
+                          type="button"
+                          data-chat-activity-action="{{ action.action }}"
+                          data-chat-activity-account="{{ action.account_id or '' }}"
+                          data-chat-activity-card="{{ action.card_number or '' }}"
+                          data-chat-activity-field="{{ action.field_key or '' }}"
+                          data-chat-activity-value="{{ action.value or '' }}"
+                          data-chat-activity-label="{{ action.label }}"
+                        >
+                          {{ action.label }}
+                        </button>
+                      {% else %}
+                        <a
+                          class="button button-small {{ 'button-primary' if loop.first else 'button-ghost' }}"
+                          href="{{ action.href }}"
+                          {% if action.href[:4] == 'http' %}target="_blank" rel="noreferrer"{% endif %}
+                        >
+                          {{ action.label }}
+                        </a>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+            </article>
+          {% endfor %}
+        {% elif not current_session.messages %}
+          <section class="gpt-empty-state">
+            <div class="gpt-empty-copy">
+              <h1>Como posso ajudar com suas financas?</h1>
+              <p>Use o chat para perguntar sobre gastos, categorias, cartoes, recorrencias e variacoes por periodo.</p>
+            </div>
+            <div class="gpt-suggestion-grid">
+              <button class="gpt-suggestion" type="button" data-chat-suggestion="Quanto gastei no cartao este mes?">
+                <strong>Gastos do mes</strong>
+                <small>Quanto gastei no cartao este mes?</small>
+              </button>
+              <button class="gpt-suggestion" type="button" data-chat-suggestion="Quais categorias mais consumiram meu dinheiro nos ultimos 30 dias?">
+                <strong>Top categorias</strong>
+                <small>Quais categorias mais consumiram meu dinheiro nos ultimos 30 dias?</small>
+              </button>
+              <button class="gpt-suggestion" type="button" data-chat-suggestion="Liste minhas ultimas movimentacoes relevantes.">
+                <strong>Ultimas movimentacoes</strong>
+                <small>Liste minhas ultimas movimentacoes relevantes.</small>
+              </button>
+              <button class="gpt-suggestion" type="button" data-chat-suggestion="Me explique como meu saldo evoluiu por mes.">
+                <strong>Evolucao do saldo</strong>
+                <small>Me explique como meu saldo evoluiu por mes.</small>
+              </button>
+            </div>
+          </section>
+        {% endif %}
+      </div>
+
+      <form class="gpt-composer" id="chat-form">
+        <input type="hidden" id="chat-session-id" value="{{ current_session.id }}">
+        <div class="gpt-composer-box">
+          <textarea id="chat-input" rows="1" placeholder="{{ chat_composer_placeholder }}"></textarea>
+          <button class="button button-primary button-small" id="chat-submit" type="submit">Enviar</button>
+        </div>
+      </form>
+    </section>
+  </section>
+{% endblock %}

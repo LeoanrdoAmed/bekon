@@ -1,0 +1,361 @@
+{% extends "base.html" %}
+{% block title %}Configuracao e Ajustes | Fin na Mao{% endblock %}
+{% block content %}
+  <section class="rail-card setup-progress-panel">
+    <div class="rail-card-head">
+      <strong>Progresso</strong>
+      <small>Etapa {{ onboarding_stage_number }} de 4</small>
+    </div>
+    <div class="setup-progress-horizontal">
+      <div class="setup-progress-item {{ 'is-active' if onboarding_stage_number == 1 else '' }} {{ 'is-done' if onboarding_stage_number > 1 else '' }}">
+        <span>1</span>
+        <div>
+          <strong>Cliente</strong>
+          <small>Dados pessoais e contato</small>
+        </div>
+      </div>
+      <div class="setup-progress-item {{ 'is-active' if onboarding_stage_number == 2 else '' }} {{ 'is-done' if onboarding_stage_number > 2 else '' }}">
+        <span>2</span>
+        <div>
+          <strong>Contas</strong>
+          <small>Banco, agencia e conta</small>
+        </div>
+      </div>
+      <div class="setup-progress-item {{ 'is-active' if onboarding_stage_number == 3 else '' }} {{ 'is-done' if onboarding_stage_number > 3 else '' }}">
+        <span>3</span>
+        <div>
+          <strong>Cartoes</strong>
+          <small>Nome e ultimos 4 digitos</small>
+        </div>
+      </div>
+      <div class="setup-progress-item {{ 'is-active' if onboarding_stage_number == 4 else '' }} {{ 'is-done' if setup_complete else '' }}">
+        <span>4</span>
+        <div>
+          <strong>Assistente</strong>
+          <small>Chat, autorizacao e fila tecnica</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="setup-conversation">
+    <div class="setup-chat-shell">
+      <div class="setup-chat-head">
+        <div>
+          <strong>Cadastro de contas e cartoes</strong>
+          <small>
+            {% if onboarding_prompt %}
+              Conclua por aqui o cadastro de contas e cartoes. O chat fica opcional para ajustes.
+            {% elif onboarding_state.stage == 'connect' %}
+              Cadastro concluido. Agora acompanhe autorizacoes e sincronizacoes das contas salvas.
+            {% else %}
+              O chat segue disponivel para ajustes e novas conexoes.
+            {% endif %}
+          </small>
+        </div>
+        <span class="badge">{{ onboarding_state.stage|upper }}</span>
+      </div>
+
+      <div class="setup-chat-messages" id="setup-messages">
+        {% for message in onboarding_state.messages %}
+          <article class="chat-bubble {{ message.role }}">
+            <div class="chat-text">{{ message.content|nl2br }}</div>
+          </article>
+        {% else %}
+          <article class="chat-bubble assistant">
+            <div class="chat-text">Nenhuma mensagem registrada ainda. Use o chat para iniciar o cadastro.</div>
+          </article>
+        {% endfor %}
+      </div>
+
+      {% if onboarding_prompt %}
+        <div class="setup-chat-composer">
+            {% if onboarding_prompt.kind == 'field' %}
+            <form method="post" class="setup-answer-form" data-preserve-scroll>
+              {{ csrf_input() }}
+              <input type="hidden" name="action" value="onboarding_answer">
+              {% if onboarding_prompt.input_type == 'select' %}
+                <div class="setup-select-stack">
+                  <input type="search" class="setup-select-filter" placeholder="Buscar banco ou codigo" data-select-filter>
+                  <select
+                    name="answer"
+                    size="8"
+                    required
+                    data-filterable-select
+                    data-placeholder="Selecione um banco"
+                  >
+                    {% for option in onboarding_prompt.options %}
+                      <option value="{{ option.value }}">{{ option.label }}</option>
+                    {% endfor %}
+                  </select>
+                  <div class="setup-bank-manual">
+                    <label class="setup-manual-toggle">
+                      <input type="checkbox" data-manual-bank-toggle>
+                      <span>Nao achei meu banco. Informar manualmente.</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="answer_manual"
+                      class="is-hidden"
+                      data-manual-bank-input
+                      placeholder="Ex.: 102 - SC XP Investimentos ou 348 - Banco XP"
+                      disabled
+                    >
+                  </div>
+                </div>
+              {% elif onboarding_prompt.input_type == 'email' %}
+                <input
+                  type="email"
+                  name="answer"
+                  placeholder="{{ onboarding_prompt.placeholder }}"
+                  inputmode="email"
+                  {% if onboarding_prompt.required %}required{% endif %}
+                >
+              {% else %}
+                <input
+                  type="text"
+                  name="answer"
+                  placeholder="{{ onboarding_prompt.placeholder }}"
+                  inputmode="{{ onboarding_prompt.inputmode }}"
+                  {% if onboarding_prompt.required %}required{% endif %}
+                >
+              {% endif %}
+              <div class="setup-answer-actions">
+                {% if onboarding_prompt.allow_skip %}
+                  <button class="button button-ghost" type="submit" name="submit_action" value="skip">Pular</button>
+                {% endif %}
+                <button class="button button-primary" type="submit">Responder</button>
+              </div>
+            </form>
+          {% elif onboarding_prompt.kind == 'choice' %}
+            <form method="post" class="setup-choice-form" data-preserve-scroll>
+              {{ csrf_input() }}
+              <input type="hidden" name="action" value="onboarding_choice">
+              {% for choice in onboarding_prompt.choices %}
+                <button class="button {{ 'button-primary' if loop.first else 'button-secondary' }}" type="submit" name="choice" value="{{ choice.value }}">
+                  {{ choice.label }}
+                </button>
+              {% endfor %}
+            </form>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+
+    <section class="panel setup-connect-panel">
+      <div class="panel-head">
+        <h2>{{ 'Contas ja cadastradas' if accounts else 'Contas prontas para o assistente' }}</h2>
+        <span>
+          {% if accounts %}
+            {% if onboarding_state.stage == 'connect' %}
+              Autorizacoes acontecem no chat. Logs e fila tecnica ficam em Operacoes.
+            {% else %}
+              O cadastro via chat salvou as contas abaixo. Voce pode continuar a etapa atual sem perder os dados ja registrados.
+            {% endif %}
+          {% else %}
+            Use o fluxo guiado abaixo para cadastrar a primeira conta e liberar as proximas etapas.
+          {% endif %}
+        </span>
+      </div>
+      <div class="hero-actions">
+        <button class="button button-primary" type="button" data-open-chat-widget>Abrir chat</button>
+        <a class="button button-ghost" href="{{ url_for('main.operations_view') }}">Abrir operacoes</a>
+        <form method="post" class="connect-inline-form" data-preserve-scroll>
+          {{ csrf_input() }}
+          <input type="hidden" name="action" value="resume_account_onboarding">
+          <button class="button button-secondary" type="submit">Adicionar nova conta</button>
+        </form>
+      </div>
+      {% if accounts %}
+        <div class="connect-account-grid">
+          {% for account in accounts %}
+            <details class="connect-account-card connect-account-card-collapsible">
+              {% set account_note = account_connection_notes.get(account.id) %}
+              <summary class="connect-account-summary">
+                <div class="connect-account-head">
+                  <div>
+                    <strong>{{ build_account_label(account) }}</strong>
+                    <small>
+                      {% if account.openfinance_last_sync_at %}
+                        Ultima atividade: {{ account.openfinance_last_sync_at }}
+                      {% else %}
+                        Conta ainda nao preparada para sincronizacao
+                      {% endif %}
+                    </small>
+                  </div>
+                  <div class="status-stack">
+                    <span class="badge {{ 'badge-success' if account.openfinance_account_hash else '' }}">
+                      {{ 'Conta preparada' if account.openfinance_account_hash else 'Preparacao pendente' }}
+                    </span>
+                    <span class="badge {{ 'badge-success' if account.openfinance_remote_status in ['ATIVO', 'ACTIVE'] else '' }}">
+                      {{ 'Banco autorizado' if account.openfinance_remote_status in ['ATIVO', 'ACTIVE'] else 'Autorizacao pendente' }}
+                    </span>
+                  </div>
+                </div>
+                <span class="connect-account-disclosure" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" role="img" focusable="false">
+                    <path d="m7 10 5 5 5-5z"></path>
+                  </svg>
+                </span>
+              </summary>
+
+              <div class="connect-account-body">
+                <div class="connect-account-fields">
+                  {% for item in account.edit_items %}
+                    <details class="profile-item profile-item-editable connect-account-field">
+                      <summary class="profile-item-head">
+                        <div class="profile-item-copy">
+                          <span>{{ item.label }}</span>
+                          <strong>{{ item.value }}</strong>
+                        </div>
+                        <span class="profile-edit-icon" aria-hidden="true">
+                          <svg viewBox="0 0 24 24" role="img" focusable="false">
+                            <path d="M4 16.25V20h3.75l11-11-3.75-3.75-11 11Zm14.71-9.04a1.003 1.003 0 0 0 0-1.42L16.21 3.29a1.003 1.003 0 0 0-1.42 0L13.13 4.95l3.75 3.75 1.83-1.49Z"></path>
+                          </svg>
+                        </span>
+                      </summary>
+                      <form method="post" class="stack-form profile-inline-form" data-preserve-scroll>
+                        {{ csrf_input() }}
+                        <input type="hidden" name="action" value="edit_account_field">
+                        <input type="hidden" name="account_id" value="{{ account.id }}">
+                        <input type="hidden" name="field_key" value="{{ item.key }}">
+                        {% if item.is_bank %}
+                          <label class="edit-bank-select">
+                            <span>Banco</span>
+                            <input type="search" class="setup-select-filter" placeholder="Buscar banco ou codigo" data-select-filter>
+                            <select
+                              name="field_value_bank"
+                              size="8"
+                              data-filterable-select
+                              data-placeholder="Selecione um banco"
+                              data-current-value="{{ item.raw_value }}"
+                            >
+                              {% for option in bank_select_options %}
+                                <option value="{{ option.value }}">{{ option.label }}</option>
+                              {% endfor %}
+                            </select>
+                            <div class="setup-bank-manual">
+                              <label class="setup-manual-toggle">
+                                <input type="checkbox" data-manual-bank-toggle>
+                                <span>Nao achei meu banco. Informar manualmente.</span>
+                              </label>
+                              <input
+                                type="text"
+                                name="field_value_bank_manual"
+                                class="is-hidden"
+                                data-manual-bank-input
+                                placeholder="Ex.: 102 - SC XP Investimentos ou 348 - Banco XP"
+                              >
+                            </div>
+                          </label>
+                        {% else %}
+                          <label>
+                            <span>Novo valor</span>
+                            <input
+                              type="{{ item.input_type }}"
+                              name="field_value"
+                              value="{{ item.raw_value }}"
+                              placeholder="{{ item.placeholder }}"
+                              {% if item.input_mode %}inputmode="{{ item.input_mode }}"{% endif %}
+                              {% if item.required %}required{% endif %}
+                            >
+                          </label>
+                        {% endif %}
+                        <div class="profile-inline-actions">
+                          <button class="button button-primary button-small" type="submit">Salvar</button>
+                        </div>
+                      </form>
+                    </details>
+                  {% endfor %}
+                </div>
+
+                <div class="connect-card-actions">
+                  <form method="post" class="connect-inline-form" data-preserve-scroll>
+                    {{ csrf_input() }}
+                    <input type="hidden" name="action" value="resume_card_onboarding">
+                    <input type="hidden" name="account_id" value="{{ account.id }}">
+                    <button class="button button-ghost" type="submit">Adicionar cartao</button>
+                  </form>
+                  <form
+                    method="post"
+                    class="connect-inline-form"
+                    data-preserve-scroll
+                    data-confirm="Excluir esta conta e todas as movimentacoes vinculadas?"
+                  >
+                    {{ csrf_input() }}
+                    <input type="hidden" name="action" value="delete_account">
+                    <input type="hidden" name="account_id" value="{{ account.id }}">
+                    <button class="button button-danger" type="submit">Excluir conta</button>
+                  </form>
+                </div>
+
+                {% if account_note %}
+                  <div class="connect-warning">
+                    <strong>Observacao operacional</strong>
+                    <p>{{ account_note }}</p>
+                  </div>
+                {% endif %}
+
+                {% if account.openfinance_credit_cards %}
+                  <div class="sync-form sync-form-cards">
+                    <h3>Cartoes vinculados</h3>
+                    <div class="card-sync-list">
+                      {% for card in account.openfinance_credit_cards %}
+                        <div class="card-sync-item">
+                          <div>
+                            <strong>{{ card.label }} - final {{ card.card_number }}</strong>
+                            <p class="sync-copy">Se a conta estiver autorizada, o sistema sincroniza esse cartao automaticamente e envia as proximas etapas no chat.</p>
+                          </div>
+                          <div class="card-sync-actions">
+                            <details class="connect-inline-editor connect-inline-editor-compact">
+                              <summary class="button button-ghost button-small">Corrigir cartao</summary>
+                              <div class="connect-inline-editor-body">
+                                <form method="post" class="stack-form" data-preserve-scroll>
+                                  {{ csrf_input() }}
+                                  <input type="hidden" name="action" value="edit_card_field">
+                                  <input type="hidden" name="card_ref" value="{{ account.id }}::{{ card.card_number }}">
+                                  <input type="hidden" name="account_id" value="{{ account.id }}">
+                                  <input type="hidden" name="card_number" value="{{ card.card_number }}">
+                                  <label>
+                                    <span>Campo</span>
+                                    <select name="field_key" required>
+                                      {% for field in card_edit_fields %}
+                                        <option value="{{ field.key }}">{{ field.label }}</option>
+                                      {% endfor %}
+                                    </select>
+                                  </label>
+                                  <label>
+                                    <span>Novo valor</span>
+                                    <input type="text" name="field_value" placeholder="Digite a correcao">
+                                  </label>
+                                  <button class="button button-secondary" type="submit">Salvar cartao</button>
+                                </form>
+                              </div>
+                            </details>
+                            <form
+                              method="post"
+                              class="connect-inline-form"
+                              data-preserve-scroll
+                              data-confirm="Excluir este cartao e as movimentacoes vinculadas?"
+                            >
+                              {{ csrf_input() }}
+                              <input type="hidden" name="action" value="delete_card">
+                              <input type="hidden" name="card_ref" value="{{ account.id }}::{{ card.card_number }}">
+                              <button class="button button-danger button-small" type="submit">Excluir cartao</button>
+                            </form>
+                          </div>
+                        </div>
+                      {% endfor %}
+                    </div>
+                  </div>
+                {% endif %}
+              </div>
+            </details>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="empty-state">Nenhuma conta cadastrada ainda. Use o fluxo guiado acima para adicionar a primeira.</p>
+      {% endif %}
+    </section>
+  </section>
+{% endblock %}

@@ -1,0 +1,39 @@
+services:
+  app:
+    build: .
+    container_name: fin-na-mao-app
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      APP_DEBUG: "0"
+      APP_AUTH_ENABLED: "1"
+      APP_SESSION_COOKIE_SECURE: "${APP_SESSION_COOKIE_SECURE:-1}"
+      HOST: "0.0.0.0"
+      PORT: "8000"
+      LLM_PROVIDER: "${LLM_PROVIDER:-ollama}"
+      OLLAMA_BASE_URL: "http://ollama:11434"
+      OLLAMA_MODEL: "${OLLAMA_MODEL:-llama3:8b}"
+    volumes:
+      - app_data:/app/dados
+    ports:
+      - "127.0.0.1:18020:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8000/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+    depends_on:
+      - ollama
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: fin-na-mao-ollama
+    restart: unless-stopped
+    volumes:
+      - ollama_data:/root/.ollama
+
+volumes:
+  app_data:
+  ollama_data:

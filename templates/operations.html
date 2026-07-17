@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}Operacoes | Fin na Mao{% endblock %}
+{% block content %}
+  <section class="stats-grid">
+    <article class="stat-card accent-ink">
+      <span class="stat-label">Autorizacoes pendentes</span>
+      <strong>{{ pending_authorizations }}</strong>
+    </article>
+    <article class="stat-card accent-sand">
+      <span class="stat-label">Protocolos concluidos</span>
+      <strong>{{ imports_completed }}</strong>
+    </article>
+    <article class="stat-card accent-coral">
+      <span class="stat-label">Em processamento</span>
+      <strong>{{ imports_processing }}</strong>
+    </article>
+    <article class="stat-card accent-mint">
+      <span class="stat-label">Chamadas de log</span>
+      <strong>{{ logs|length }}</strong>
+    </article>
+  </section>
+
+  <section class="dashboard-grid">
+    <article class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>Fila de sincronizacao</h2>
+          <span>{{ imports|length }} registros</span>
+        </div>
+        <div class="hero-actions">
+          <button class="button button-primary" type="button" data-open-chat-widget>Abrir chat</button>
+          <form method="post">
+            {{ csrf_input() }}
+            <input type="hidden" name="action" value="run_sync_cycle">
+            <button class="button button-secondary" type="submit">Atualizar fila agora</button>
+          </form>
+        </div>
+      </div>
+      {% if imports %}
+        <div class="import-list">
+          {% for item in imports[:16] %}
+            <div class="import-row block">
+              <div>
+                <strong>{{ item.account_label }}</strong>
+                <small>{{ item.period_start }} ate {{ item.period_end }} - {{ item.updated_at or item.created_at }}</small>
+                {% if item.reason %}
+                  <small class="import-reason">{{ item.reason }}</small>
+                {% endif %}
+              </div>
+              <div class="inline-actions">
+                <span class="badge">{{ item.status or '-' }}</span>
+                <strong>{{ item.transactions|length }} transacoes</strong>
+                <form method="post">
+                  {{ csrf_input() }}
+                  <input type="hidden" name="action" value="refresh_statement_protocol">
+                  <input type="hidden" name="import_id" value="{{ item.id }}">
+                  <button class="button button-ghost" type="submit">Atualizar</button>
+                </form>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="empty-state">Nenhum protocolo registrado ainda.</p>
+      {% endif %}
+    </article>
+
+    <article class="panel">
+      <div class="panel-head">
+        <h2>Logs Open Finance</h2>
+        <span>{{ logs|length }} ultimas chamadas</span>
+      </div>
+      {% if logs %}
+        <div class="setup-edit-stack">
+          {% for item in logs %}
+            <details class="setup-edit-card">
+              <summary>
+                {{ item.method or '-' }} {{ item.path or '-' }} - {{ item.status or '-' }} - {{ item.at or '-' }}
+              </summary>
+              <div class="stack-form">
+                <div class="rail-summary-item">
+                  <span>Resultado</span>
+                  <strong>{{ 'OK' if item.ok else 'Falha' }}</strong>
+                </div>
+                <div class="rail-summary-item">
+                  <span>URL</span>
+                  <strong>{{ item.url or '-' }}</strong>
+                </div>
+                {% if item.error %}
+                  <div class="connect-warning">
+                    <strong>Erro</strong>
+                    <p>{{ item.error }}</p>
+                  </div>
+                {% endif %}
+                {% if item.payload %}
+                  <label>
+                    <span>Payload</span>
+                    <textarea rows="5" readonly>{{ item.payload }}</textarea>
+                  </label>
+                {% endif %}
+                {% if item.response %}
+                  <label>
+                    <span>Resposta</span>
+                    <textarea rows="7" readonly>{{ item.response }}</textarea>
+                  </label>
+                {% endif %}
+              </div>
+            </details>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="empty-state">Nenhum log tecnico encontrado ainda.</p>
+      {% endif %}
+    </article>
+  </section>
+{% endblock %}
