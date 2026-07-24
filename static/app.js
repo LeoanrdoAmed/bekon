@@ -1011,3 +1011,79 @@
     setWidgetOpen(true);
   }
 })();
+
+(() => {
+  const dashboard = document.querySelector('body[data-page="dashboard"]');
+  if (!dashboard) return;
+
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const revealTargets = Array.from(
+    document.querySelectorAll([
+      ".bekon-hero-panel",
+      ".dashboard-stats-grid .stat-card",
+      ".dashboard-filter-panel",
+      ".dashboard-grid-analytics > .panel",
+      ".monthly-flow-row",
+      ".metric-bar-row",
+      ".category-donut-item",
+      ".summary-table-wrap",
+      ".table-wrap",
+    ].join(","))
+  );
+
+  const chartTargets = Array.from(
+    document.querySelectorAll([
+      ".monthly-flow-panel",
+      ".balance-line-panel",
+      ".weekly-expense-panel",
+      ".category-donut-layout",
+      ".metric-bar-list",
+    ].join(","))
+  );
+
+  const showElement = (element) => {
+    element.classList.add("is-visible");
+  };
+
+  revealTargets.forEach((element, index) => {
+    element.classList.add("reveal-ready");
+    element.style.setProperty("--reveal-delay", `${Math.min(index * 46, 360)}ms`);
+  });
+
+  if (reduceMotion || !("IntersectionObserver" in window)) {
+    revealTargets.forEach(showElement);
+    chartTargets.forEach((element) => element.classList.add("is-chart-visible"));
+    return;
+  }
+
+  const revealObserver = new IntersectionObserver(
+    (entries, observer) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        showElement(entry.target);
+        observer.unobserve(entry.target);
+      });
+    },
+    {
+      threshold: 0.14,
+      rootMargin: "0px 0px -8% 0px",
+    }
+  );
+
+  const chartObserver = new IntersectionObserver(
+    (entries, observer) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-chart-visible");
+        observer.unobserve(entry.target);
+      });
+    },
+    {
+      threshold: 0.22,
+      rootMargin: "0px 0px -10% 0px",
+    }
+  );
+
+  revealTargets.forEach((element) => revealObserver.observe(element));
+  chartTargets.forEach((element) => chartObserver.observe(element));
+})();

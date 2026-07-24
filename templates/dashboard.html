@@ -1,6 +1,28 @@
 ﻿{% extends "base.html" %}
 {% block title %}Dashboard | Fin na Mao{% endblock %}
 {% block content %}
+  <section class="bekon-hero-panel" aria-label="Visao geral Bekon">
+    <div class="bekon-hero-copy">
+      <span class="bekon-hero-kicker">Bekon Finance</span>
+      <h2>Bem-vinda de volta, {{ authenticated_user or 'Bekon' }}</h2>
+      <p>Resumo executivo do recorte atual com saldo, entradas, saidas e categorias para decisao rapida.</p>
+      <div class="bekon-hero-rail" aria-label="Destaques do painel">
+        <span>Open Finance privado</span>
+        <span>Leitura por recorte</span>
+        <span>Chat operacional</span>
+      </div>
+    </div>
+    <div class="bekon-hero-actions" aria-label="Acoes do painel">
+      <span class="bekon-period-chip">{{ dashboard_filters.date_start or 'Inicio' }} - {{ dashboard_filters.date_end or 'Hoje' }}</span>
+      <button class="button button-primary button-small" type="button" data-open-chat-widget>Abrir chat</button>
+    </div>
+    <div class="bekon-hero-scene" aria-hidden="true">
+      <img src="{{ url_for('static', filename='hero-bekon-lighthouse.png') }}" alt="">
+      <div class="bekon-hero-shine"></div>
+      <div class="bekon-hero-scanline"></div>
+    </div>
+  </section>
+
   <section class="panel dashboard-filter-panel">
     <div class="dashboard-filter-head">
       <div class="dashboard-filter-copy">
@@ -108,19 +130,19 @@
   </section>
 
   <section class="stats-grid dashboard-stats-grid">
-    <article class="stat-card accent-ink">
+    <article class="stat-card accent-ink dashboard-stat-feature">
       <span class="stat-label">Entradas</span>
       <strong>{{ dash_money(summary.total_entradas) }}</strong>
     </article>
-    <article class="stat-card accent-sand">
+    <article class="stat-card accent-sand dashboard-stat-support">
       <span class="stat-label">Saidas</span>
       <strong>{{ dash_money(summary.total_saidas) }}</strong>
     </article>
-    <article class="stat-card accent-mint">
+    <article class="stat-card accent-mint dashboard-stat-support">
       <span class="stat-label">Saldo liquido</span>
       <strong>{{ dash_money(summary.saldo_liquido) }}</strong>
     </article>
-    <article class="stat-card accent-coral">
+    <article class="stat-card accent-coral dashboard-stat-support">
       <span class="stat-label">Categoria dominante</span>
       <strong>
         {% if summary.top_categories %}
@@ -682,4 +704,3 @@
     </article>
   </section>
 {% endblock %}
-
