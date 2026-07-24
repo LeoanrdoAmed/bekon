@@ -19,6 +19,19 @@ python app.py
 
 A aplicacao sobe por padrao em `http://127.0.0.1:8000`.
 
+## Acesso local
+
+Para preparar um login local sem versionar senha nem dados operacionais:
+
+```powershell
+Copy-Item .env.local.example .env
+$env:APP_AUTH_PASSWORD = "defina-uma-senha-local-forte"
+python scripts/reset_local_password.py fontenelle --create
+Remove-Item Env:\APP_AUTH_PASSWORD
+```
+
+O comando grava apenas o hash em `dados/users.json`. A pasta `dados/` e o arquivo `.env` ficam fora do Git por conterem segredos, dados financeiros e dados de clientes.
+
 ## Docker
 
 Para ambiente com Ollama local via Docker:
