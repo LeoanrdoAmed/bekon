@@ -8,8 +8,10 @@
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.svg') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard-refinement.css') }}">
   </head>
   <body data-page="{{ page_key or '' }}">
+    <a class="skip-link" href="#main-content">Ir para o conteúdo principal</a>
     <div class="page-shell">
       <aside class="erp-sidebar">
         <div class="erp-sidebar-brand">
@@ -21,24 +23,24 @@
         </div>
 
         <nav class="erp-nav" aria-label="Navegacao principal">
-          <a class="erp-nav-item {{ 'is-active' if page_key == 'dashboard' else '' }}" href="{{ url_for('main.dashboard') }}">
+          <a class="erp-nav-item {{ 'is-active' if page_key == 'dashboard' else '' }}" href="{{ url_for('main.dashboard') }}" aria-label="Dashboard">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6h-4v6H5a1 1 0 0 1-1-1v-9.5Z"></path></svg>
             <span>Dashboard</span>
           </a>
-          <a class="erp-nav-item {{ 'is-active' if page_key == 'setup' else '' }}" href="{{ url_for('main.connections') }}">
+          <a class="erp-nav-item {{ 'is-active' if page_key == 'setup' else '' }}" href="{{ url_for('main.connections') }}" aria-label="Conexoes">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6.5A2.5 2.5 0 0 1 7.5 4h9A2.5 2.5 0 0 1 19 6.5v11A2.5 2.5 0 0 1 16.5 20h-9A2.5 2.5 0 0 1 5 17.5v-11Zm3 1v3h8v-3H8Zm0 6v1.6h8V13.5H8Z"></path></svg>
             <span>Conexoes</span>
           </a>
-          <a class="erp-nav-item {{ 'is-active' if page_key == 'operations' else '' }}" href="{{ url_for('main.operations_view') }}">
+          <a class="erp-nav-item {{ 'is-active' if page_key == 'operations' else '' }}" href="{{ url_for('main.operations_view') }}" aria-label="Operacoes">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v3H5V4Zm0 6h14v3H5v-3Zm0 6h14v4H5v-4Z"></path></svg>
             <span>Operacoes</span>
           </a>
-          <a class="erp-nav-item {{ 'is-active' if page_key == 'profile' else '' }}" href="{{ url_for('main.profile_view') }}">
+          <a class="erp-nav-item {{ 'is-active' if page_key == 'profile' else '' }}" href="{{ url_for('main.profile_view') }}" aria-label="Perfil">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-8 8a8 8 0 0 1 16 0v1H4v-1Z"></path></svg>
             <span>Perfil</span>
           </a>
           {% if can_manage_users %}
-            <a class="erp-nav-item {{ 'is-active' if page_key == 'register' else '' }}" href="{{ url_for('main.register') }}">
+            <a class="erp-nav-item {{ 'is-active' if page_key == 'register' else '' }}" href="{{ url_for('main.register') }}" aria-label="Usuarios">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 11a4 4 0 1 0-8 0 4 4 0 0 0 8 0Zm-12 9a8 8 0 0 1 13.3-6h1.2v-3h2v3h3v2h-3v3h-2v-3h-3v-1.1A6 6 0 0 0 5 20H3Z"></path></svg>
               <span>Usuarios</span>
             </a>
@@ -88,7 +90,7 @@
           {% endif %}
         {% endwith %}
 
-        <main class="main-content">
+        <main class="main-content" id="main-content" tabindex="-1">
           {% block content %}{% endblock %}
         </main>
       </div>

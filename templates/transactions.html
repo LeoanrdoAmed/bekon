@@ -1,7 +1,16 @@
 {% extends "base.html" %}
 {% block title %}Transacoes | Fin na Mao{% endblock %}
 {% block content %}
-  <section class="panel">
+  <section class="page-context transactions-context">
+    <div>
+      <span class="eyebrow">Movimentações</span>
+      <h2>Encontre o que compõe seu saldo.</h2>
+      <p>Filtre, pesquise e leve o contexto certo para a conversa com a Bekon.</p>
+    </div>
+    <button class="button button-ghost" type="button" data-open-chat-widget data-chat-suggestion="Analise as movimentações que estou visualizando.">Analisar este recorte</button>
+  </section>
+
+  <section class="panel transaction-filter-panel">
     <form method="get" class="filter-row">
       <label>
         <span>Conta</span>
@@ -28,7 +37,7 @@
     </form>
   </section>
 
-  <section class="stats-grid">
+  <section class="stats-grid transaction-stats" aria-label="Resumo das movimentações">
     <article class="stat-card accent-ink">
       <span class="stat-label">Entradas</span>
       <strong>{{ money(summary.total_entradas) }}</strong>
@@ -47,10 +56,16 @@
     </article>
   </section>
 
-  <section class="panel">
+  <section class="panel transaction-list-panel">
     <div class="panel-head">
-      <h2>Lista de movimentacoes</h2>
-      <button class="button button-ghost button-small" type="button" data-open-chat-widget>Perguntar sobre esse conjunto</button>
+      <div>
+        <h2>Lista de movimentações</h2>
+        <span>{{ transactions|length }} lançamentos no recorte atual</span>
+      </div>
+      <label class="transaction-search">
+        <span class="sr-only">Pesquisar movimentações visíveis</span>
+        <input type="search" placeholder="Buscar descrição ou categoria" data-tx-search>
+      </label>
     </div>
     {% if transactions %}
       <div class="table-wrap">
@@ -66,14 +81,14 @@
           </thead>
           <tbody>
             {% for tx in transactions %}
-              <tr>
+              <tr data-tx-row data-tx-search-text="{{ tx.data }} {{ tx.descricao }} {{ tx.categoria }} {{ tx.subcategoria }} {{ tx.account_label }}">
                 <td>{{ tx.data }}</td>
                 <td>
                   <strong>{{ tx.descricao }}</strong>
                   <small>{{ tx.statement_type }}{% if tx.card_number %} - final {{ tx.card_number }}{% endif %}</small>
                 </td>
                 <td>
-                  <strong>{{ tx.categoria }}</strong>
+                  <strong class="tx-category-pill">{{ tx.categoria }}</strong>
                   {% if tx.subcategoria %}
                     <small>{{ tx.subcategoria }}</small>
                   {% endif %}
@@ -85,6 +100,7 @@
           </tbody>
         </table>
       </div>
+      <p class="empty-state transaction-search-empty" hidden data-tx-search-empty>Nenhuma movimentação visível corresponde à sua busca.</p>
     {% else %}
       <p class="empty-state">Nenhuma transacao encontrada para o filtro atual.</p>
     {% endif %}

@@ -1,6 +1,15 @@
 {% extends "base.html" %}
 {% block title %}Configuracao e Ajustes | Fin na Mao{% endblock %}
 {% block content %}
+  <section class="page-context connections-context">
+    <div>
+      <span class="eyebrow">Saúde das conexões</span>
+      <h2>Suas contas, prontas para acompanhar.</h2>
+      <p>Confira autorizações, sincronizações e o próximo passo de cada instituição.</p>
+    </div>
+    <a class="button button-primary" href="#connected-accounts">Ver contas conectadas</a>
+  </section>
+
   <section class="rail-card setup-progress-panel">
     <div class="rail-card-head">
       <strong>Progresso</strong>
@@ -142,7 +151,7 @@
       {% endif %}
     </div>
 
-    <section class="panel setup-connect-panel">
+    <section class="panel setup-connect-panel" id="connected-accounts">
       <div class="panel-head">
         <h2>{{ 'Contas ja cadastradas' if accounts else 'Contas prontas para o assistente' }}</h2>
         <span>

@@ -1,0 +1,877 @@
+/* Bekon dashboard — compact financial workspace. This final layer intentionally
+   owns dashboard geometry, preventing older exploratory styles from competing. */
+body[data-page="dashboard"] {
+  --bk-navy: #10283b;
+  --bk-ink: #172230;
+  --bk-gold: #c49722;
+  --bk-paper: #f6f7f5;
+  --bk-line: #e5e9e5;
+  --bk-muted: #6e7986;
+}
+
+body[data-page="dashboard"] .main-content {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  align-content: start;
+  gap: 16px !important;
+  padding-bottom: 44px;
+}
+
+body[data-page="dashboard"] .dashboard-overview,
+body[data-page="dashboard"] .dashboard-attention,
+body[data-page="dashboard"] .bekon-hero-panel { display: none !important; }
+
+/* Filter is the only control surface: compact, legible, and first. */
+body[data-page="dashboard"] .dashboard-filter-panel {
+  order: 1 !important;
+  display: block !important;
+  height: auto !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+  padding: 14px 16px !important;
+  background: #fff !important;
+  border: 1px solid var(--bk-line) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 2px 12px rgba(16, 40, 59, .045) !important;
+  transform: none !important;
+}
+body[data-page="dashboard"] .dashboard-filter-panel::before,
+body[data-page="dashboard"] .dashboard-filter-panel::after { display: none !important; }
+body[data-page="dashboard"] .dashboard-filter-head { display: none !important; }
+body[data-page="dashboard"] .dashboard-filter-form { display: grid !important; gap: 12px !important; }
+body[data-page="dashboard"] .dashboard-filter-grid {
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) minmax(244px, 1.25fr) !important;
+  gap: 10px !important;
+}
+body[data-page="dashboard"] .dashboard-filter-field,
+body[data-page="dashboard"] .dashboard-filter-range { min-width: 0 !important; }
+body[data-page="dashboard"] .dashboard-filter-field select,
+body[data-page="dashboard"] .dashboard-filter-field input {
+  height: 42px !important;
+  min-height: 42px !important;
+  background: #f7f8f7 !important;
+  border: 1px solid transparent !important;
+  border-radius: 9px !important;
+  color: var(--bk-ink) !important;
+  font-size: 13px !important;
+}
+body[data-page="dashboard"] .dashboard-filter-field select:focus,
+body[data-page="dashboard"] .dashboard-filter-field input:focus { border-color: var(--bk-gold) !important; box-shadow: 0 0 0 3px rgba(196, 151, 34, .14) !important; }
+body[data-page="dashboard"] .dashboard-filter-range-fields { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+body[data-page="dashboard"] .dashboard-filter-range .dashboard-filter-field > span { display: none !important; }
+body[data-page="dashboard"] .dashboard-filter-footer {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  min-height: 38px !important;
+  padding: 10px 0 0 !important;
+  border-top: 1px solid var(--bk-line) !important;
+}
+body[data-page="dashboard"] .dashboard-filter-cta { display: flex; gap: 8px; }
+body[data-page="dashboard"] .dashboard-filter-cta .button {
+  height: 38px !important;
+  padding: 0 14px !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
+  box-shadow: none !important;
+}
+body[data-page="dashboard"] .dashboard-filter-cta .button-primary { color: #fff !important; background: var(--bk-navy) !important; border-color: var(--bk-navy) !important; }
+body[data-page="dashboard"] .dashboard-filter-cta .button-ghost { color: var(--bk-ink) !important; background: #fff !important; border-color: var(--bk-line) !important; }
+
+/* KPI strip: the reference direction is compact cards with data, not empty slabs. */
+body[data-page="dashboard"] .dashboard-stats-grid {
+  order: 2 !important;
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  height: auto !important;
+}
+body[data-page="dashboard"] .dashboard-stats-grid .stat-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  height: 128px !important;
+  min-height: 128px !important;
+  padding: 16px !important;
+  border: 1px solid var(--bk-line) !important;
+  border-top: 2px solid var(--bk-gold) !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+body[data-page="dashboard"] .dashboard-stats-grid .stat-card.accent-ink { background: var(--bk-navy) !important; border-color: var(--bk-navy) !important; }
+body[data-page="dashboard"] .dashboard-stats-grid .stat-card .stat-label { font-size: 12px !important; font-weight: 650 !important; color: var(--bk-muted) !important; }
+body[data-page="dashboard"] .dashboard-stats-grid .stat-card strong { color: var(--bk-ink) !important; font-size: clamp(20px, 1.8vw, 29px) !important; line-height: 1.05 !important; font-variant-numeric: tabular-nums; }
+body[data-page="dashboard"] .dashboard-stats-grid .stat-card.accent-ink .stat-label,
+body[data-page="dashboard"] .dashboard-stats-grid .stat-card.accent-ink strong { color: #fff !important; }
+
+/* Analysis is a deliberate two-column reading order — never implicit grid rows. */
+body[data-page="dashboard"] .dashboard-grid-analytics {
+  order: 3 !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.38fr) minmax(330px, .62fr) !important;
+  grid-auto-rows: auto !important;
+  align-items: start !important;
+  gap: 14px !important;
+  width: 100% !important;
+  height: auto !important;
+}
+body[data-page="dashboard"] .dashboard-grid-analytics > .panel {
+  display: block !important;
+  grid-column: auto !important;
+  grid-row: auto !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 18px !important;
+  border: 1px solid var(--bk-line) !important;
+  border-radius: 14px !important;
+  background: #fff !important;
+  box-shadow: 0 2px 12px rgba(16, 40, 59, .04) !important;
+  overflow: hidden !important;
+}
+body[data-page="dashboard"] .dashboard-grid-analytics > .panel::after { display: none !important; }
+body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(1) { grid-column: 1 / -1 !important; }
+body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(4),
+body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(5),
+body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(8) { grid-column: 1 / -1 !important; }
+body[data-page="dashboard"] .dashboard-grid-analytics .panel-head { margin-bottom: 14px !important; }
+body[data-page="dashboard"] .dashboard-grid-analytics .panel-head h2 { font-size: 16px !important; letter-spacing: -.02em; }
+body[data-page="dashboard"] .dashboard-grid-analytics .panel-head span { font-size: 12px !important; color: var(--bk-muted) !important; }
+
+/* Motion: data first. Rows, bar fills, line and donut all enter once and stop. */
+body[data-page="dashboard"] .dashboard-stats-grid .stat-card { animation: bk-rise 380ms cubic-bezier(.2,.8,.2,1) both; }
+body[data-page="dashboard"] .dashboard-stats-grid .stat-card:nth-child(2) { animation-delay: 45ms; }
+body[data-page="dashboard"] .dashboard-stats-grid .stat-card:nth-child(3) { animation-delay: 90ms; }
+body[data-page="dashboard"] .dashboard-stats-grid .stat-card:nth-child(4) { animation-delay: 135ms; }
+body[data-page="dashboard"] .monthly-flow-row,
+body[data-page="dashboard"] .weekly-expense-day { animation: bk-rise 360ms cubic-bezier(.2,.8,.2,1) both !important; }
+body[data-page="dashboard"] .monthly-flow-fill { transform-origin: left center; animation: bk-grow-x 700ms cubic-bezier(.2,.8,.2,1) both !important; }
+body[data-page="dashboard"] .weekly-expense-bar { transform-origin: bottom; animation: bk-grow-y 620ms cubic-bezier(.2,.8,.2,1) both !important; }
+body[data-page="dashboard"] .balance-line-stroke { stroke-dasharray: 1200; stroke-dashoffset: 1200; animation: bk-line 1000ms cubic-bezier(.2,.8,.2,1) both !important; }
+body[data-page="dashboard"] .balance-line-area { animation: bk-fade 520ms ease-out 360ms both !important; }
+body[data-page="dashboard"] .category-donut-segment { transform-origin: center; animation: bk-donut 740ms cubic-bezier(.2,.8,.2,1) both; }
+body[data-page="dashboard"] .panel:hover { border-color: rgba(196, 151, 34, .48) !important; transition: border-color 180ms ease, box-shadow 180ms ease; }
+body[data-page="dashboard"] .button:active { transform: scale(.98); }
+@keyframes bk-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes bk-grow-x { from { transform: scaleX(.02); } to { transform: scaleX(1); } }
+@keyframes bk-grow-y { from { transform: scaleY(.03); } to { transform: scaleY(1); } }
+@keyframes bk-line { to { stroke-dashoffset: 0; } }
+@keyframes bk-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes bk-donut { from { opacity: 0; transform: rotate(-45deg); } to { opacity: 1; transform: rotate(0); } }
+
+@media (max-width: 1050px) {
+  body[data-page="dashboard"] .dashboard-filter-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+  body[data-page="dashboard"] .dashboard-stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+}
+@media (max-width: 760px) {
+  body[data-page="dashboard"] .main-content { gap: 12px !important; }
+  body[data-page="dashboard"] .main-content > .dashboard-filter-panel.reveal-ready { height: auto !important; }
+  body[data-page="dashboard"] .dashboard-filter-grid { grid-template-columns: 1fr 1fr !important; }
+  body[data-page="dashboard"] .dashboard-filter-range { grid-column: 1 / -1; }
+  body[data-page="dashboard"] .dashboard-filter-footer { align-items: flex-start !important; gap: 10px; flex-direction: column; }
+  body[data-page="dashboard"] .dashboard-filter-cta { width: 100%; }
+  body[data-page="dashboard"] .dashboard-filter-cta .button { flex: 1; }
+  body[data-page="dashboard"] .dashboard-grid-analytics,
+  body[data-page="dashboard"] .dashboard-stats-grid { grid-template-columns: 1fr !important; }
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(n) { grid-column: 1 !important; }
+  body[data-page="dashboard"] .dashboard-stats-grid .stat-card { height: 116px !important; min-height: 116px !important; }
+  body[data-page="dashboard"] .monthly-flow-row {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto auto auto !important;
+    gap: 9px !important;
+    min-height: 0 !important;
+    padding: 12px !important;
+  }
+  body[data-page="dashboard"] .monthly-flow-lines { gap: 7px !important; }
+  body[data-page="dashboard"] .monthly-flow-cash { justify-self: stretch !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body[data-page="dashboard"] *, body[data-page="dashboard"] *::before, body[data-page="dashboard"] *::after { animation: none !important; transition: none !important; }
+}
+
+/* Product-canvas layout — based on the approved compact SaaS reference. */
+@media (min-width: 1060px) {
+  body[data-page="dashboard"] { background: #f1f2ef !important; }
+  body[data-page="dashboard"] .page-shell {
+    position: relative;
+    display: grid !important;
+    grid-template-columns: 176px minmax(0, 1fr) !important;
+    width: min(1440px, calc(100% - 72px)) !important;
+    min-height: calc(100vh - 68px);
+    margin: 34px auto !important;
+    overflow: hidden;
+    border: 1px solid #e1e5e1;
+    border-radius: 18px !important;
+    background: #fff;
+    box-shadow: 0 18px 54px rgba(16, 40, 59, .08) !important;
+  }
+  body[data-page="dashboard"] .erp-sidebar {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column;
+    width: auto !important;
+    height: auto !important;
+    min-height: 100% !important;
+    padding: 86px 14px 16px !important;
+    border: 0 !important;
+    border-right: 1px solid #edf0ed !important;
+    border-radius: 0 !important;
+    background: #fff !important;
+    box-shadow: none !important;
+  }
+  body[data-page="dashboard"] .erp-sidebar::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 86px;
+    background: var(--bk-navy);
+  }
+  body[data-page="dashboard"] .erp-sidebar-brand {
+    position: absolute !important;
+    z-index: 1;
+    top: 20px;
+    left: 22px;
+    display: flex !important;
+    gap: 8px;
+    padding: 0 !important;
+    border: 0 !important;
+  }
+  body[data-page="dashboard"] .erp-sidebar-brand .brand-logo { width: 34px !important; height: 34px !important; border-radius: 8px; }
+  body[data-page="dashboard"] .erp-sidebar-brand .brand-meta { display: none !important; }
+  body[data-page="dashboard"] .erp-nav { display: grid !important; gap: 4px; }
+  body[data-page="dashboard"] .erp-nav-item,
+  body[data-page="dashboard"] .erp-sidebar:hover .erp-nav-item,
+  body[data-page="dashboard"] .erp-sidebar:focus-within .erp-nav-item {
+    display: flex !important;
+    align-items: center;
+    width: 100% !important;
+    min-height: 40px;
+    padding: 0 10px !important;
+    border-radius: 8px !important;
+    color: #607080 !important;
+    font-size: 12px !important;
+    font-weight: 560;
+  }
+  body[data-page="dashboard"] .erp-nav-item svg { width: 17px !important; height: 17px !important; }
+  body[data-page="dashboard"] .erp-nav-item span { display: inline !important; }
+  body[data-page="dashboard"] .erp-nav-item.is-active { color: var(--bk-navy) !important; background: #f5f5f2 !important; }
+  body[data-page="dashboard"] .erp-sidebar-account { margin-top: auto !important; padding: 12px 4px 0 !important; border-top: 1px solid #edf0ed; }
+  body[data-page="dashboard"] .erp-workspace { min-width: 0; background: #fbfcfa; }
+  body[data-page="dashboard"] .erp-topbar {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    min-height: 86px !important;
+    padding: 0 28px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: var(--bk-navy) !important;
+  }
+  body[data-page="dashboard"] .erp-topbar::after {
+    content: "Visão geral · Contas · Transações · Relatórios";
+    order: -1;
+    color: rgba(255,255,255,.72);
+    font-size: 12px;
+    letter-spacing: .01em;
+  }
+  body[data-page="dashboard"] .erp-topbar > div { display: none !important; }
+  body[data-page="dashboard"] .erp-topbar .button { height: 34px !important; padding: 0 13px !important; color: var(--bk-navy) !important; border-color: #fff !important; background: #fff !important; border-radius: 8px !important; font-size: 12px !important; }
+  body[data-page="dashboard"] .main-content { padding: 20px 26px 42px !important; gap: 14px !important; }
+
+  body[data-page="dashboard"] .dashboard-filter-panel { padding: 10px 12px !important; border-radius: 10px !important; }
+  body[data-page="dashboard"] .dashboard-filter-form { grid-template-columns: minmax(0,1fr) auto !important; align-items: center; gap: 10px !important; }
+  body[data-page="dashboard"] .dashboard-filter-grid { grid-template-columns: repeat(5, minmax(84px, 1fr)) minmax(210px, 1.3fr) !important; gap: 8px !important; }
+  body[data-page="dashboard"] .dashboard-filter-field select,
+  body[data-page="dashboard"] .dashboard-filter-field input { height: 36px !important; min-height: 36px !important; font-size: 12px !important; }
+  body[data-page="dashboard"] .dashboard-filter-footer { display: contents !important; }
+  body[data-page="dashboard"] .dashboard-filter-toggles { display: none !important; }
+  body[data-page="dashboard"] .dashboard-filter-cta { gap: 6px !important; }
+  body[data-page="dashboard"] .dashboard-filter-cta .button { height: 36px !important; padding: 0 10px !important; white-space: nowrap; }
+
+  body[data-page="dashboard"] .dashboard-stats-grid { grid-template-columns: repeat(3, minmax(0,1fr)) !important; gap: 12px !important; }
+  body[data-page="dashboard"] .dashboard-stats-grid .stat-card { height: 108px !important; min-height: 108px !important; padding: 16px 18px !important; border: 0 !important; border-radius: 10px !important; background: var(--bk-navy) !important; }
+  body[data-page="dashboard"] .dashboard-stats-grid .stat-card:nth-child(4) { display: none !important; }
+  body[data-page="dashboard"] .dashboard-stats-grid .stat-card .stat-label,
+  body[data-page="dashboard"] .dashboard-stats-grid .stat-card strong { color: #fff !important; }
+  body[data-page="dashboard"] .dashboard-stats-grid .stat-card .stat-label { opacity: .75; }
+  body[data-page="dashboard"] .dashboard-stats-grid .stat-card strong { font-size: 25px !important; }
+
+  body[data-page="dashboard"] .dashboard-grid-analytics { grid-template-columns: repeat(3, minmax(0,1fr)) !important; gap: 12px !important; }
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel { padding: 17px !important; border-radius: 10px !important; }
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(1),
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(2),
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(3) { grid-column: auto !important; }
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(4),
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(5),
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(8) { grid-column: 1 / -1 !important; }
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(n+6):not(:nth-child(8)) { display: none !important; }
+  body[data-page="dashboard"] .monthly-flow-row { grid-template-columns: 1fr !important; grid-template-rows: auto auto auto !important; gap: 8px !important; padding: 10px 0 !important; }
+  body[data-page="dashboard"] .monthly-flow-row:nth-child(n+4) { display: none; }
+  body[data-page="dashboard"] .monthly-flow-cash { justify-self: stretch !important; }
+  body[data-page="dashboard"] .balance-line-shell { min-height: 150px !important; }
+  body[data-page="dashboard"] .weekly-expense-chart { min-height: 148px !important; }
+}
+
+/* Dense workspace: icon rail keeps the financial canvas in focus. */
+@media (min-width: 1060px) {
+  body[data-page="dashboard"] .page-shell { grid-template-columns: 74px minmax(0, 1fr) !important; }
+  body[data-page="dashboard"] .erp-sidebar { padding: 86px 10px 14px !important; }
+  body[data-page="dashboard"] .erp-sidebar-brand { top: 24px; left: 20px; }
+  body[data-page="dashboard"] .erp-sidebar-brand .brand-logo { width: 34px !important; height: 34px !important; }
+  body[data-page="dashboard"] .erp-nav { justify-items: center; gap: 7px; }
+  body[data-page="dashboard"] .erp-nav-item,
+  body[data-page="dashboard"] .erp-sidebar:hover .erp-nav-item,
+  body[data-page="dashboard"] .erp-sidebar:focus-within .erp-nav-item {
+    position: relative;
+    justify-content: center;
+    width: 42px !important;
+    min-height: 42px;
+    padding: 0 !important;
+  }
+  body[data-page="dashboard"] .erp-nav-item span { display: none !important; }
+  body[data-page="dashboard"] .erp-nav-item::after {
+    content: attr(aria-label);
+    position: absolute;
+    z-index: 20;
+    left: calc(100% + 10px);
+    top: 50%;
+    padding: 6px 8px;
+    border-radius: 6px;
+    color: #fff;
+    background: var(--bk-navy);
+    font-size: 11px;
+    line-height: 1;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(4px, -50%);
+    transition: opacity 150ms ease, transform 150ms ease;
+  }
+  body[data-page="dashboard"] .erp-nav-item:hover::after,
+  body[data-page="dashboard"] .erp-nav-item:focus-visible::after { opacity: 1; transform: translate(0, -50%); }
+  body[data-page="dashboard"] .erp-sidebar-account { display: none !important; }
+}
+
+/* Reference-level ordering and motion refinement, informed by 21st's Advanced
+   Stats and Weekly KPI Chart: one short entrance, then purposeful chart motion. */
+@media (min-width: 1060px) {
+  body[data-page="dashboard"] .dashboard-stats-grid .stat-card { position: relative; overflow: hidden; }
+  body[data-page="dashboard"] .dashboard-stats-grid .stat-card::after {
+    content: "";
+    position: absolute;
+    right: 16px;
+    bottom: 18px;
+    width: 104px;
+    height: 34px;
+    opacity: .95;
+    background: url("data:image/svg+xml,%3Csvg width='104' height='34' viewBox='0 0 104 34' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 26 L12 22 L20 25 L30 12 L39 20 L50 14 L60 23 L69 17 L79 20 L91 5 L103 11' fill='none' stroke='%23d9ad35' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+    transform-origin: right center;
+    animation: bk-spark-draw 800ms cubic-bezier(.2,.8,.2,1) 260ms both;
+  }
+  body[data-page="dashboard"] .dashboard-stats-grid .stat-card:nth-child(2)::after { transform: scaleX(-1); }
+  body[data-page="dashboard"] .dashboard-stats-grid .stat-card:nth-child(3)::after { opacity: .7; }
+  body[data-page="dashboard"] .dashboard-stats-grid .stat-card strong { max-width: calc(100% - 108px); }
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(1),
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(2),
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(3) { min-height: 262px !important; }
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(8) { order: 4; }
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(4) { order: 5; }
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(5) { order: 6; }
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(6) { display: block !important; order: 7; }
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(7) { display: block !important; order: 8; }
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(6),
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(7) { grid-column: span 1 !important; }
+  body[data-page="dashboard"] .tx-table tbody tr { animation: bk-row-in 300ms cubic-bezier(.2,.8,.2,1) both; }
+  body[data-page="dashboard"] .tx-table tbody tr:nth-child(2) { animation-delay: 35ms; }
+  body[data-page="dashboard"] .tx-table tbody tr:nth-child(3) { animation-delay: 70ms; }
+  body[data-page="dashboard"] .tx-table tbody tr:nth-child(4) { animation-delay: 105ms; }
+  body[data-page="dashboard"] .tx-table tbody tr:nth-child(5) { animation-delay: 140ms; }
+}
+@keyframes bk-spark-draw { from { opacity: 0; transform: translateX(8px) scaleX(.65); } to { opacity: .95; transform: translateX(0) scaleX(1); } }
+@keyframes bk-row-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) {
+  body[data-page="dashboard"] .dashboard-stats-grid .stat-card::after,
+  body[data-page="dashboard"] .tx-table tbody tr { animation: none !important; }
+}
+
+/* Exploration stays compact and follows the transaction list — it is not a
+   hero-sized destination inside the dashboard. */
+@media (min-width: 1060px) {
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(5) { order: 6 !important; }
+  body[data-page="dashboard"] #category-breakdown .category-donut-layout {
+    display: grid !important;
+    grid-template-columns: minmax(230px, .7fr) minmax(0, 1.3fr) !important;
+    align-items: center !important;
+    gap: 22px !important;
+  }
+  body[data-page="dashboard"] #category-breakdown .category-donut-hero {
+    display: grid !important;
+    grid-template-columns: 140px minmax(0, 1fr) !important;
+    align-items: center !important;
+    gap: 14px !important;
+    min-height: 0 !important;
+  }
+  body[data-page="dashboard"] #category-breakdown .category-donut-shell {
+    width: 140px !important;
+    height: 140px !important;
+    margin: 0 !important;
+  }
+  body[data-page="dashboard"] #category-breakdown .category-donut-chart { width: 140px !important; height: 140px !important; }
+  body[data-page="dashboard"] #category-breakdown .category-donut-overview { align-items: flex-start !important; text-align: left !important; }
+  body[data-page="dashboard"] #category-breakdown .category-donut-overview strong { font-size: 24px !important; }
+  body[data-page="dashboard"] #category-breakdown .category-accordion-list { display: grid !important; gap: 7px !important; }
+  body[data-page="dashboard"] #category-breakdown .category-accordion-item,
+  body[data-page="dashboard"] #category-breakdown .category-more { margin: 0 !important; border-radius: 8px !important; }
+  body[data-page="dashboard"] #category-breakdown .category-accordion-summary {
+    display: grid !important;
+    grid-template-columns: auto minmax(0, 1fr) auto auto !important;
+    min-height: 56px !important;
+    padding: 9px 12px !important;
+  }
+  body[data-page="dashboard"] #category-breakdown .category-accordion-summary small { font-size: 11px !important; }
+  body[data-page="dashboard"] #category-breakdown .category-donut-value { font-size: 14px !important; }
+}
+
+/* Final structural reset. The dashboard must be a deliberate vertical reading
+   sequence; no legacy grid row may place content out of order. */
+body[data-page="dashboard"] .main-content {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+body[data-page="dashboard"] .main-content > .dashboard-filter-panel,
+body[data-page="dashboard"] .main-content > .dashboard-stats-grid,
+body[data-page="dashboard"] .main-content > .dashboard-grid-analytics {
+  grid-column: auto !important;
+  grid-row: auto !important;
+  align-self: auto !important;
+  width: 100% !important;
+}
+body[data-page="dashboard"] .main-content > .dashboard-filter-panel { order: 1 !important; }
+body[data-page="dashboard"] .main-content > .dashboard-stats-grid { order: 2 !important; }
+body[data-page="dashboard"] .main-content > .dashboard-grid-analytics { order: 3 !important; }
+
+/* Prevent inherited statistic ornaments from colliding with labels and values. */
+body[data-page="dashboard"] .dashboard-stats-grid .stat-card::before,
+body[data-page="dashboard"] .dashboard-stats-grid .dashboard-stat-feature::before {
+  position: static !important;
+  inset: auto !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: transparent !important;
+  content: "" !important;
+}
+body[data-page="dashboard"] .dashboard-stats-grid .stat-label {
+  position: static !important;
+  inset: auto !important;
+  display: block !important;
+  margin: 0 !important;
+}
+body[data-page="dashboard"] .dashboard-stats-grid .stat-card::after {
+  top: 18px !important;
+  bottom: auto !important;
+  right: 16px !important;
+  width: 74px !important;
+  height: 24px !important;
+  pointer-events: none;
+}
+body[data-page="dashboard"] .dashboard-stats-grid .stat-card strong {
+  align-self: flex-start !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+}
+
+/* Analytical row before the transaction table, matching the reference rhythm. */
+body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(1) { order: 1 !important; }
+body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(2) { order: 2 !important; }
+body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(3) { order: 3 !important; }
+body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(8) { order: 4 !important; }
+body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(4) { order: 5 !important; }
+body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(5) { order: 6 !important; }
+body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(6) { order: 7 !important; }
+body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(7) { order: 8 !important; }
+
+/* Final identity override — the beacon mark remains visible without recreating
+   the old full-width navy header behind the brand. */
+body[data-page] .erp-sidebar-brand,
+body[data-page="dashboard"] .erp-sidebar-brand {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 10px !important;
+  min-width: max-content;
+}
+body[data-page] .erp-sidebar-brand .brand-logo,
+body[data-page="dashboard"] .erp-sidebar-brand .brand-logo {
+  display: block !important;
+  width: 32px !important;
+  height: 32px !important;
+  flex: 0 0 32px !important;
+  object-fit: cover !important;
+  border: 1px solid rgba(196, 151, 34, .32) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 5px 14px rgba(16, 40, 59, .14) !important;
+}
+body[data-page] .erp-sidebar-brand::after,
+body[data-page="dashboard"] .erp-sidebar-brand::after {
+  content: "BEKON" !important;
+  display: block !important;
+  color: var(--bk-gold, #c49722) !important;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+  font-size: 21px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  letter-spacing: -.055em !important;
+  text-transform: uppercase !important;
+  text-shadow: none !important;
+}
+
+/* Bekon signature: the actual beacon mark is retained, without the old navy
+   brand band.  Keeping the mark beside the gold wordmark makes the rail
+   identifiable even when navigation labels are collapsed. */
+body[data-page] .erp-sidebar-brand,
+body[data-page="dashboard"] .erp-sidebar-brand {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 10px !important;
+  min-width: max-content;
+}
+body[data-page] .erp-sidebar-brand .brand-logo,
+body[data-page="dashboard"] .erp-sidebar-brand .brand-logo {
+  display: block !important;
+  width: 32px !important;
+  height: 32px !important;
+  flex: 0 0 32px !important;
+  object-fit: cover !important;
+  border: 1px solid rgba(196, 151, 34, .32) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 5px 14px rgba(16, 40, 59, .14) !important;
+}
+body[data-page] .erp-sidebar-brand::after,
+body[data-page="dashboard"] .erp-sidebar-brand::after {
+  content: "BEKON" !important;
+  display: block !important;
+  color: var(--bk-gold, #c49722) !important;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+  font-size: 21px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  letter-spacing: -.055em !important;
+  text-transform: uppercase !important;
+  text-shadow: none !important;
+}
+
+/* Negative liquidity is expressed by a descending red sparkline, not color alone. */
+body[data-page="dashboard"] .dashboard-stats-grid .stat-card.accent-mint::after {
+  background-image: url("data:image/svg+xml,%3Csvg width='104' height='34' viewBox='0 0 104 34' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 6 L12 8 L20 7 L31 12 L40 10 L50 17 L60 15 L70 22 L80 20 L91 28 L103 30' fill='none' stroke='%23f17373' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+}
+
+/* Bekon material layer: floating data surfaces over a quiet navigation field. */
+body[data-page="dashboard"] .erp-workspace {
+  background:
+    radial-gradient(circle at 96% 4%, transparent 0 42px, rgba(196, 151, 34, .10) 43px 44px, transparent 45px 71px, rgba(196, 151, 34, .055) 72px 73px, transparent 74px),
+    radial-gradient(circle at 7% 94%, transparent 0 58px, rgba(196, 151, 34, .075) 59px 60px, transparent 61px 88px, rgba(196, 151, 34, .045) 89px 90px, transparent 91px),
+    #f7f9f7 !important;
+}
+body[data-page="dashboard"] .dashboard-filter-panel,
+body[data-page="dashboard"] .dashboard-grid-analytics > .panel {
+  background: linear-gradient(145deg, rgba(255,255,255,.98), rgba(246,248,246,.98)) !important;
+  border-color: rgba(16, 40, 59, .10) !important;
+  box-shadow: 0 10px 28px rgba(16, 40, 59, .075), inset 0 1px 0 rgba(255,255,255,.82) !important;
+}
+body[data-page="dashboard"] .dashboard-stats-grid .stat-card {
+  background:
+    radial-gradient(circle at 86% 9%, rgba(196,151,34,.15), transparent 28%),
+    linear-gradient(145deg, #18394f 0%, #0c2436 100%) !important;
+  border-color: rgba(16, 40, 59, .66) !important;
+  box-shadow: 0 14px 28px rgba(16, 40, 59, .20), inset 0 1px 0 rgba(255,255,255,.07) !important;
+}
+body[data-page="dashboard"] .dashboard-stats-grid .stat-card.accent-ink,
+body[data-page="dashboard"] .dashboard-stats-grid .stat-card.accent-sand,
+body[data-page="dashboard"] .dashboard-stats-grid .stat-card.accent-mint,
+body[data-page="dashboard"] .dashboard-stats-grid .stat-card.accent-coral {
+  background:
+    radial-gradient(circle at 86% 9%, rgba(196,151,34,.15), transparent 28%),
+    linear-gradient(145deg, #18394f 0%, #0c2436 100%) !important;
+}
+body[data-page="dashboard"] .dashboard-filter-panel:hover,
+body[data-page="dashboard"] .dashboard-grid-analytics > .panel:hover {
+  box-shadow: 0 15px 32px rgba(16, 40, 59, .10), inset 0 1px 0 rgba(255,255,255,.86) !important;
+}
+
+/* The chat control is global, fixed to the viewport and independent of scroll. */
+body[data-page="dashboard"] .chat-widget-shell {
+  position: fixed !important;
+  z-index: 120 !important;
+  right: 26px !important;
+  bottom: 26px !important;
+  left: auto !important;
+  top: auto !important;
+}
+body[data-page="dashboard"] .chat-widget-shell .chat-widget-launcher {
+  position: static !important;
+  margin: 0 !important;
+}
+@media (max-width: 760px) {
+  body[data-page="dashboard"] .chat-widget-shell { right: 18px !important; bottom: 18px !important; }
+}
+
+/* Shared product identity: no navy banner behind the Bekon wordmark. */
+body[data-page] .erp-sidebar::before { display: none !important; }
+body[data-page] .erp-sidebar-brand,
+body[data-page="dashboard"] .erp-sidebar-brand {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+body[data-page] .erp-sidebar-brand .brand-logo,
+body[data-page="dashboard"] .erp-sidebar-brand .brand-logo { display: block !important; }
+body[data-page] .erp-sidebar-brand::after,
+body[data-page="dashboard"] .erp-sidebar-brand::after {
+  content: "BEKON" !important;
+  color: var(--bk-gold, #c49722) !important;
+  font-family: ui-sans-serif, system-ui, sans-serif !important;
+  font-size: 22px !important;
+  font-weight: 850 !important;
+  letter-spacing: -.045em !important;
+  text-transform: uppercase;
+}
+
+/* Profile and operational summaries use actual recognisable icon marks. */
+body[data-page="profile"] .stats-grid .stat-card,
+body[data-page="operations"] .stats-grid .stat-card {
+  position: relative;
+  display: flex !important;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 158px !important;
+  padding: 22px !important;
+  overflow: hidden;
+  background: linear-gradient(145deg, #fff, #f7f9f7) !important;
+  border: 1px solid rgba(16,40,59,.10) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 10px 26px rgba(16,40,59,.075) !important;
+}
+body[data-page="profile"] .stats-grid .stat-card::before,
+body[data-page="operations"] .stats-grid .stat-card::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 20px !important;
+  left: 22px !important;
+  display: block !important;
+  width: 34px !important;
+  height: 34px !important;
+  padding: 0 !important;
+  border: 1px solid rgba(196,151,34,.25) !important;
+  border-radius: 10px !important;
+  background-color: #fff8e8 !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-size: 18px !important;
+}
+body[data-page="profile"] .stats-grid .stat-label,
+body[data-page="operations"] .stats-grid .stat-label {
+  position: static !important;
+  display: block !important;
+  margin: 1px 0 0 48px !important;
+  color: #647384 !important;
+  font-size: 12px !important;
+  font-weight: 750 !important;
+  line-height: 1.25 !important;
+}
+body[data-page="profile"] .stats-grid .stat-card strong,
+body[data-page="operations"] .stats-grid .stat-card strong {
+  align-self: flex-start !important;
+  margin: 0 !important;
+  color: #10283b !important;
+  font-size: 32px !important;
+  line-height: 1.05 !important;
+}
+body[data-page="profile"] .stats-grid .stat-card:nth-child(1)::before { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23c49722' stroke-width='2'%3E%3Cpath d='M12 3v18M5 9l7-6 7 6M5 15l7 6 7-6'/%3E%3C/svg%3E") !important; }
+body[data-page="profile"] .stats-grid .stat-card:nth-child(2)::before { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23c49722' stroke-width='2'%3E%3Cpath d='M3 21h18M5 21V9l7-5 7 5v12M8 13h2m4 0h2m-8 4h2m4 0h2'/%3E%3C/svg%3E") !important; }
+body[data-page="profile"] .stats-grid .stat-card:nth-child(3)::before { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23c49722' stroke-width='2'%3E%3Crect x='3' y='5' width='18' height='14' rx='2'/%3E%3Cpath d='M3 10h18M7 15h3'/%3E%3C/svg%3E") !important; }
+body[data-page="profile"] .stats-grid .stat-card:nth-child(4)::before { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23c49722' stroke-width='2'%3E%3Cpath d='m5 12 4 4L19 6'/%3E%3C/svg%3E") !important; }
+body[data-page="operations"] .stats-grid .stat-card:nth-child(1)::before { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23c49722' stroke-width='2'%3E%3Cpath d='M12 3 4 7v5c0 5 3.4 8.5 8 9 4.6-.5 8-4 8-9V7l-8-4Z'/%3E%3Cpath d='m9 12 2 2 4-4'/%3E%3C/svg%3E") !important; }
+body[data-page="operations"] .stats-grid .stat-card:nth-child(2)::before { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23c49722' stroke-width='2'%3E%3Cpath d='m5 12 4 4L19 6'/%3E%3C/svg%3E") !important; }
+body[data-page="operations"] .stats-grid .stat-card:nth-child(3)::before { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23c49722' stroke-width='2'%3E%3Cpath d='M7 3v4m10-4v4M5 9h14M7 21h10a2 2 0 0 0 2-2V7H5v12a2 2 0 0 0 2 2Z'/%3E%3C/svg%3E") !important; }
+body[data-page="operations"] .stats-grid .stat-card:nth-child(4)::before { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23c49722' stroke-width='2'%3E%3Cpath d='M4 19V5m0 14h16M8 15v-4m4 4V7m4 8v-6'/%3E%3C/svg%3E") !important; }
+
+/* Connections inherits the same concise elevated surfaces. */
+body[data-page="setup"] .connections-context,
+body[data-page="setup"] .setup-progress-panel,
+body[data-page="setup"] .setup-chat-shell,
+body[data-page="setup"] .setup-connect-panel {
+  border-color: rgba(16,40,59,.10) !important;
+  box-shadow: 0 10px 28px rgba(16,40,59,.075), inset 0 1px 0 rgba(255,255,255,.82) !important;
+}
+body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(n) {
+  grid-row: auto !important;
+}
+
+/* Action affordances use concise icons rather than unlabeled blocks. */
+body[data-page="dashboard"] .button[data-open-chat-widget]::before,
+body[data-page="dashboard"] .dashboard-filter-cta .button-primary::before,
+body[data-page="dashboard"] .dashboard-filter-cta .button-ghost::before {
+  content: "";
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  margin-right: 7px;
+  vertical-align: -2px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+body[data-page="dashboard"] .button[data-open-chat-widget]::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310283b' stroke-width='2'%3E%3Cpath d='M20 15a4 4 0 0 1-4 4H9l-5 3V7a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4z'/%3E%3C/svg%3E");
+}
+body[data-page="dashboard"] .dashboard-filter-cta .button-primary::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2.4'%3E%3Cpath d='m5 12 4 4L19 6'/%3E%3C/svg%3E");
+}
+body[data-page="dashboard"] .dashboard-filter-cta .button-ghost::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310283b' stroke-width='2'%3E%3Cpath d='M20 11a8 8 0 1 0 2 5'/%3E%3Cpath d='M20 4v7h-7'/%3E%3C/svg%3E");
+}
+
+/* Proportion pass: mirror the reference's readable rail, fixed KPI rhythm and
+   three equal analysis cards. These rules deliberately come last. */
+@media (min-width: 1060px) {
+  body[data-page="dashboard"] .page-shell { grid-template-columns: 206px minmax(0, 1fr) !important; }
+  body[data-page="dashboard"] .erp-sidebar { padding: 86px 14px 16px !important; }
+  body[data-page="dashboard"] .erp-sidebar-brand { left: 23px !important; }
+  body[data-page="dashboard"] .erp-sidebar-brand::after {
+    content: "BEKON" !important;
+    display: block;
+    align-self: center;
+    color: var(--bk-gold, #c49722) !important;
+    font-size: 21px !important;
+    font-weight: 900 !important;
+    letter-spacing: -.055em !important;
+  }
+  body[data-page="dashboard"] .erp-nav { justify-items: stretch !important; gap: 5px !important; }
+  body[data-page="dashboard"] .erp-nav-item,
+  body[data-page="dashboard"] .erp-sidebar:hover .erp-nav-item,
+  body[data-page="dashboard"] .erp-sidebar:focus-within .erp-nav-item {
+    justify-content: flex-start !important;
+    gap: 12px !important;
+    width: 100% !important;
+    padding: 0 12px !important;
+  }
+  body[data-page="dashboard"] .erp-nav-item span { display: inline !important; }
+  body[data-page="dashboard"] .erp-nav-item::after { display: none !important; }
+  body[data-page="dashboard"] .erp-topbar::after {
+    content: "Visão geral     Contas     Investimentos     Transações     Relatórios" !important;
+    color: rgba(255,255,255,.88) !important;
+    font-weight: 550;
+    word-spacing: 10px;
+  }
+  body[data-page="dashboard"] .dashboard-stats-grid .stat-card { height: 126px !important; min-height: 126px !important; padding: 17px 20px !important; }
+  body[data-page="dashboard"] .dashboard-stats-grid .stat-card .stat-label { font-size: 13px !important; }
+  body[data-page="dashboard"] .dashboard-stats-grid .stat-card strong { font-size: 26px !important; }
+  body[data-page="dashboard"] .dashboard-stats-grid .stat-card::after { top: 24px !important; right: 20px !important; width: 100px !important; height: 30px !important; }
+
+  body[data-page="dashboard"] .dashboard-grid-analytics { grid-auto-rows: 286px !important; }
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(1),
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(2),
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(3) {
+    height: 286px !important;
+    min-height: 286px !important;
+    max-height: 286px !important;
+    padding: 18px 20px !important;
+  }
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(1) .monthly-flow-panel {
+    max-height: 190px !important;
+    overflow: hidden !important;
+  }
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(1) .monthly-flow-row {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto auto auto !important;
+    gap: 5px !important;
+    padding: 7px 0 !important;
+  }
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(1) .monthly-flow-row:nth-child(n+3) { display: none !important; }
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(1) .monthly-flow-copy small,
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(1) .monthly-flow-cash span { display: none !important; }
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(1) .monthly-flow-line { gap: 7px !important; }
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(1) .monthly-flow-tag,
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(1) .monthly-flow-value { font-size: 11px !important; }
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(2) .balance-line-top { gap: 2px !important; }
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(2) .balance-line-top strong { font-size: 28px !important; }
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(2) .balance-line-top small { font-size: 11px !important; }
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(2) .balance-line-shell { min-height: 134px !important; height: 134px !important; }
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(3) .weekly-expense-top { margin-bottom: 8px !important; }
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(3) .weekly-expense-total strong { font-size: 28px !important; }
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(3) .weekly-expense-chart { min-height: 118px !important; height: 118px !important; }
+  body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(8) { align-self: start; }
+}
+
+/* One navigation system only: the left rail. Chat lives in its global bubble. */
+body[data-page="dashboard"] .erp-topbar { display: none !important; }
+body[data-page="dashboard"] .erp-workspace { min-width: 0 !important; }
+body[data-page="dashboard"] .main-content { padding-top: 24px !important; }
+body[data-page="dashboard"] .chat-widget-shell { z-index: 120 !important; }
+body[data-page="dashboard"] .chat-widget-launcher {
+  display: grid !important;
+  place-items: center;
+  width: 54px !important;
+  height: 54px !important;
+  border: 2px solid rgba(196, 151, 34, .85) !important;
+  border-radius: 50% !important;
+  background: var(--bk-navy) !important;
+  box-shadow: 0 12px 26px rgba(16, 40, 59, .22) !important;
+  transition: transform 180ms ease, box-shadow 180ms ease !important;
+}
+body[data-page="dashboard"] .chat-widget-launcher:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 16px 30px rgba(16, 40, 59, .28) !important; }
+body[data-page="dashboard"] .chat-widget-launcher svg { width: 22px !important; height: 22px !important; fill: #fff !important; stroke: #fff !important; }
+
+/* Reveal KPI sparklines along the path, with no text collision or layout motion. */
+body[data-page="dashboard"] .dashboard-stats-grid .stat-card::after {
+  clip-path: inset(0 100% 0 0);
+  opacity: 1 !important;
+  animation: bk-kpi-line-reveal 900ms cubic-bezier(.16, 1, .3, 1) 180ms both !important;
+}
+body[data-page="dashboard"] .dashboard-stats-grid .stat-card:nth-child(2)::after { animation-delay: 320ms !important; }
+body[data-page="dashboard"] .dashboard-stats-grid .stat-card:nth-child(3)::after { animation-delay: 460ms !important; }
+@keyframes bk-kpi-line-reveal {
+  from { clip-path: inset(0 100% 0 0); transform: translateX(-4px); }
+  to { clip-path: inset(0 0 0 0); transform: translateX(0); }
+}
+
+/* Legacy transforms and grid offsets are prohibited on dashboard panels. */
+body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(n),
+body[data-page="dashboard"] .dashboard-grid-analytics > .panel#category-breakdown {
+  position: relative !important;
+  inset: auto !important;
+  margin: 0 !important;
+  transform: none !important;
+}
+body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(4),
+body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(5) {
+  clear: both;
+}
+@media (prefers-reduced-motion: reduce) {
+  body[data-page="dashboard"] .dashboard-stats-grid .stat-card::after { animation: none !important; clip-path: none; }
+}
+
+/* Exploration before detail: categories, then movements, then monthly cash.
+   Automatic grid rows prevent long tables from bleeding into the next panel. */
+body[data-page="dashboard"] .dashboard-grid-analytics {
+  grid-auto-rows: auto !important;
+  align-items: start !important;
+}
+body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(5) { order: 4 !important; }
+body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(8) { order: 5 !important; }
+body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(4) { order: 6 !important; }
+body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(6) { order: 7 !important; }
+body[data-page="dashboard"] .dashboard-grid-analytics > .panel:nth-child(7) { order: 8 !important; }

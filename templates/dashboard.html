@@ -1,15 +1,77 @@
 ﻿{% extends "base.html" %}
 {% block title %}Dashboard | Fin na Mao{% endblock %}
 {% block content %}
+  {% set latest_month = summary.monthly[-1] if summary.monthly else none %}
+  {% set previous_month = summary.monthly[-2] if summary.monthly|length > 1 else none %}
+  <section class="dashboard-overview" aria-label="Visão geral do período">
+    <div class="dashboard-overview-copy">
+      <span class="eyebrow">Visão de agora</span>
+      <h2>Seu dinheiro, com contexto para decidir.</h2>
+      <p>{{ dashboard_scope_label }}. Veja o que mudou e escolha seu próximo passo.</p>
+    </div>
+    <div class="dashboard-overview-balance">
+      <span>Saldo líquido do recorte</span>
+      <strong class="{{ 'positive' if summary.saldo_liquido >= 0 else 'negative' }}">{{ dash_money(summary.saldo_liquido) }}</strong>
+      {% if latest_month and previous_month %}
+        {% set month_delta = latest_month.geracao_caixa - previous_month.geracao_caixa %}
+        <small class="{{ 'positive' if month_delta >= 0 else 'negative' }}">{{ '+' if month_delta >= 0 else '-' }}{{ dash_money(month_delta|abs) }} vs. {{ previous_month.label }}</small>
+      {% else %}
+        <small>Comparativo disponível após dois meses de movimentações.</small>
+      {% endif %}
+    </div>
+    <div class="dashboard-overview-actions">
+      <a class="button button-primary" href="#dashboard-attention">Ver prioridades</a>
+      <button class="button button-ghost" type="button" data-open-chat-widget data-chat-suggestion="O que merece minha atenção neste período?">Perguntar à Bekon</button>
+    </div>
+  </section>
+
+  <section class="dashboard-attention" id="dashboard-attention" aria-labelledby="attention-title">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">Atenção</span>
+        <h2 id="attention-title">O que merece seu olhar agora</h2>
+      </div>
+      <button class="button button-ghost button-small" type="button" data-open-chat-widget data-chat-suggestion="Explique as prioridades financeiras deste período.">Analisar com a Bekon</button>
+    </div>
+    <div class="attention-grid">
+      {% if summary.weekly_expenses and summary.weekly_expenses.total > 0 %}
+        <article class="attention-card attention-card-expense">
+          <span class="attention-card-icon" aria-hidden="true">↗</span>
+          <div><span>Ritmo de gastos</span><strong>{{ summary.weekly_expenses.trend_text }}</strong><p>{{ dash_money(summary.weekly_expenses.total) }} nos últimos 7 dias do recorte.</p></div>
+          <a href="#weekly-expenses">Ver semana</a>
+        </article>
+      {% endif %}
+      {% if summary.top_categories %}
+        <article class="attention-card">
+          <span class="attention-card-icon" aria-hidden="true">◎</span>
+          <div><span>Maior concentração</span><strong>{{ summary.top_categories[0].categoria }}</strong><p>{{ dash_money(summary.top_categories[0].valor) }} representam {{ dash_pct(summary.top_categories[0].share) }} do movimentado.</p></div>
+          <a href="#category-breakdown">Explorar categoria</a>
+        </article>
+      {% endif %}
+      {% if not accounts %}
+        <article class="attention-card attention-card-action">
+          <span class="attention-card-icon" aria-hidden="true">+</span>
+          <div><span>Primeiro passo</span><strong>Conecte uma conta</strong><p>Assim que a sincronização terminar, sua visão financeira aparecerá aqui.</p></div>
+          <a href="{{ url_for('main.connections') }}">Ir para conexões</a>
+        </article>
+      {% elif not summary.monthly %}
+        <article class="attention-card attention-card-action">
+          <span class="attention-card-icon" aria-hidden="true">i</span>
+          <div><span>Leitura em formação</span><strong>Precisamos de mais movimentações</strong><p>Continue sincronizando para desbloquear comparativos e tendências.</p></div>
+          <a href="{{ url_for('main.connections') }}">Checar conexões</a>
+        </article>
+      {% endif %}
+    </div>
+  </section>
+
   <section class="bekon-hero-panel" aria-label="Visao geral Bekon">
     <div class="bekon-hero-copy">
-      <span class="bekon-hero-kicker">Bekon Finance</span>
-      <h2>Bem-vinda de volta, {{ authenticated_user or 'Bekon' }}</h2>
-      <p>Resumo executivo do recorte atual com saldo, entradas, saidas e categorias para decisao rapida.</p>
+      <span class="bekon-hero-kicker">Resumo executivo</span>
+      <h2>Visão consolidada do seu dinheiro.</h2>
+      <p>Saldo, fluxo e pontos de atenção no recorte que você escolheu.</p>
       <div class="bekon-hero-rail" aria-label="Destaques do painel">
         <span>Open Finance privado</span>
-        <span>Leitura por recorte</span>
-        <span>Chat operacional</span>
+        <span>Leitura por período</span>
       </div>
     </div>
     <div class="bekon-hero-actions" aria-label="Acoes do painel">
@@ -17,13 +79,15 @@
       <button class="button button-primary button-small" type="button" data-open-chat-widget>Abrir chat</button>
     </div>
     <div class="bekon-hero-scene" aria-hidden="true">
+      <span class="bekon-light-beam bekon-light-beam-left"></span>
+      <span class="bekon-light-beam bekon-light-beam-right"></span>
       <img src="{{ url_for('static', filename='hero-bekon-lighthouse.png') }}" alt="">
       <div class="bekon-hero-shine"></div>
       <div class="bekon-hero-scanline"></div>
     </div>
   </section>
 
-  <section class="panel dashboard-filter-panel">
+  <section class="panel dashboard-filter-panel" id="dashboard-filters">
     <div class="dashboard-filter-head">
       <div class="dashboard-filter-copy">
         <h2>Filtros</h2>
@@ -267,7 +331,7 @@
       {% endif %}
     </article>
 
-    <article class="panel weekly-expense-panel">
+    <article class="panel weekly-expense-panel" id="weekly-expenses">
       <div class="panel-head">
         <h2>Gastos essa semana</h2>
         <span>{{ summary.weekly_expenses.range_label if summary.weekly_expenses else 'Ultimos 7 dias do recorte' }}</span>
@@ -362,7 +426,7 @@
       {% endif %}
     </article>
 
-    <article class="panel panel-span-2">
+    <article class="panel panel-span-2" id="category-breakdown">
       <div class="panel-head">
         <h2>Categorias que mais pesam</h2>
         <span>Peso das movimentacoes por categoria</span>

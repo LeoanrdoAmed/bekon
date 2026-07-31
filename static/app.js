@@ -902,6 +902,12 @@
     if (!trigger) return;
     event.preventDefault();
     setWidgetOpen(true);
+    const suggestion = trigger.getAttribute("data-chat-suggestion");
+    if (suggestion && input) {
+      input.value = suggestion;
+      autoResize();
+      window.requestAnimationFrame(() => input.focus());
+    }
   });
 
   document.addEventListener("keydown", (event) => {
@@ -1010,6 +1016,28 @@
   if (chatRoot.dataset.autoOpen === "1") {
     setWidgetOpen(true);
   }
+})();
+
+(() => {
+  const search = document.querySelector("[data-tx-search]");
+  if (!search) return;
+
+  const rows = Array.from(document.querySelectorAll("[data-tx-row]"));
+  const emptyState = document.querySelector("[data-tx-search-empty]");
+
+  const filterRows = () => {
+    const term = String(search.value || "").trim().toLocaleLowerCase("pt-BR");
+    let visibleCount = 0;
+    rows.forEach((row) => {
+      const haystack = String(row.getAttribute("data-tx-search-text") || "").toLocaleLowerCase("pt-BR");
+      const visible = !term || haystack.includes(term);
+      row.hidden = !visible;
+      if (visible) visibleCount += 1;
+    });
+    if (emptyState) emptyState.hidden = visibleCount > 0;
+  };
+
+  search.addEventListener("input", filterRows);
 })();
 
 (() => {
